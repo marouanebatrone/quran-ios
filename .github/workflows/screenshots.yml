@@ -1,0 +1,89 @@
+name: Screenshots
+
+# Renders pull request screenshots from a harness test on throwaway screenshots/* branches,
+# and uploads them as the "screenshots" artifact.
+on:
+  push:
+    branches:
+      - 'screenshots/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  Screenshots:
+    # The Intel pool: hosted Apple silicon runners are short of capacity. Fallbacks: macos-15-intel, macos-15.
+    runs-on: macos-26-intel
+    # A cold build on Intel can take up to 90 minutes.
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setting up Xcode
+        run: sudo xcode-select -s "/Applications/Xcode_26.2.app"
+
+      - name: Choose a simulator
+        id: simulator
+        shell: bash
+        run: |
+          xcrun simctl list devices available | tee simulators.txt
+          # The iPhone 16e has the iPhone 17e's 390×844 pt screen; otherwise take the first iPhone.
+          line=$(grep -m 1 -E "^ +iPhone 16e \(" simulators.txt || grep -m 1 -E "^ +iPhone " simulators.txt || true)
+          fallback="id=$(echo "$line" | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')"
+          if grep -q "iPhone 17e (" simulators.txt; then
+            destination="name=iPhone 17e,OS=latest"
+          else
+            destination=$fallback
+          fi
+          echo "Destination: $destination (fallback: $fallback, from: $line)"
+          echo "destination=$destination" >> "$GITHUB_OUTPUT"
+          echo "fallback=$fallback" >> "$GITHUB_OUTPUT"
+
+      - name: Render screenshots
+        shell: bash
+        env:
+          # xcodebuild passes TEST_RUNNER_-prefixed variables to the test process without the prefix.
+          TEST_RUNNER_SCREENSHOTS_DIR: ${{ github.workspace }}/screenshots
+          DESTINATION: ${{ steps.simulator.outputs.destination }}
+          FALLBACK_DESTINATION: ${{ steps.simulator.outputs.fallback }}
+        run: |
+          mkdir -p "$TEST_RUNNER_SCREENSHOTS_DIR"
+          render() {
+            echo "Testing on $1"
+            env -u QURAN_SYNC xcrun xcodebuild test \
+              -scheme QuranEngine-Package \
+              -sdk iphonesimulator \
+              -destination "$1" \
+              -derivedDataPath .build/DerivedData/no-sync \
+              -only-testing:QuranTranslationFeatureTests/TranslationFootnotesScreenshotTests \
+              2>&1 | tee -a xcodebuild.log | grep --line-buffered -E "error:|\[screenshots\]|^Test Case|^Test Suite|^\*\* "
+            return "${PIPESTATUS[0]}"
+          }
+          set +e
+          render "$DESTINATION"
+          status=$?
+          # Xcode 26.2 may not run the newer runtimes that have the iPhone 17e.
+          if [ "$status" -ne 0 ] && [ "$FALLBACK_DESTINATION" != "$DESTINATION" ] \
+            && grep -q "Unable to find a destination matching" xcodebuild.log; then
+            render "$FALLBACK_DESTINATION"
+            status=$?
+          fi
+          ls -la "$TEST_RUNNER_SCREENSHOTS_DIR"
+          exit "$status"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: screenshots
+          path: screenshots/
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: xcodebuild-log
+          path: xcodebuild.log

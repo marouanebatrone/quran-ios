@@ -817,9 +817,17 @@ private func featuresTargets() -> [[Target]] {
             "QuranLocalization",
             "QuranTextKit",
         ], testDependencies: [
+            "AnnotationsService",
+            "NoorFont",
+            "NoorUI",
             "QuranKit",
+            "QuranResources",
             "QuranText",
+            "QuranTextKit",
+            "ReadingService",
+            "TranslationService",
             "UIx",
+            "VerseTextPersistence",
         ]),
 
         target(type, name: "QuranContentFeature", dependencies: [
