@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   Package:
-    runs-on: macos-26
+    runs-on: macos-26-intel
     timeout-minutes: 45
 
     steps:
@@ -28,9 +28,9 @@ jobs:
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: .build/DerivedData/no-sync
-        key: ${{ runner.os }}-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift') }}-${{ github.sha }}
+        key: ${{ runner.os }}-intel-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift') }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift') }}-
+          ${{ runner.os }}-intel-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift') }}-
 
     - name: Install xcbeautify
       run: brew install xcbeautify
@@ -43,7 +43,7 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
 
   PackageSync:
-    runs-on: macos-26
+    runs-on: macos-26-intel
     timeout-minutes: 45
 
     steps:
@@ -56,9 +56,9 @@ jobs:
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: .build/DerivedData/sync
-        key: ${{ runner.os }}-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift') }}-${{ github.sha }}
+        key: ${{ runner.os }}-intel-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift') }}-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift') }}-
+          ${{ runner.os }}-intel-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift') }}-
 
     - name: Install xcbeautify
       run: brew install xcbeautify
@@ -67,7 +67,7 @@ jobs:
       run: make test-sync
 
   ExampleApp:
-    runs-on: macos-26
+    runs-on: macos-26-intel
     timeout-minutes: 30
 
     steps:
@@ -80,9 +80,9 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .build/DerivedData/no-sync
-          key: ${{ runner.os }}-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift', 'Example/QuranEngineApp.xcodeproj/project.pbxproj') }}-${{ github.sha }}
+          key: ${{ runner.os }}-intel-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift', 'Example/QuranEngineApp.xcodeproj/project.pbxproj') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift', 'Example/QuranEngineApp.xcodeproj/project.pbxproj') }}-
+            ${{ runner.os }}-intel-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift', 'Example/QuranEngineApp.xcodeproj/project.pbxproj') }}-
 
       - name: Install xcbeautify
         run: brew install xcbeautify
@@ -91,7 +91,7 @@ jobs:
         run: make build-example-no-sync
 
   ExampleAppSync:
-    runs-on: macos-26
+    runs-on: macos-26-intel
     timeout-minutes: 30
 
     steps:
@@ -104,9 +104,9 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .build/DerivedData/sync
-          key: ${{ runner.os }}-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift', 'Example/QuranEngineApp.xcodeproj/project.pbxproj') }}-${{ github.sha }}
+          key: ${{ runner.os }}-intel-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift', 'Example/QuranEngineApp.xcodeproj/project.pbxproj') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift', 'Example/QuranEngineApp.xcodeproj/project.pbxproj') }}-
+            ${{ runner.os }}-intel-xcode-26.2-${{ github.job }}-${{ hashFiles('Package.resolved', 'Package.swift', 'Example/QuranEngineApp.xcodeproj/project.pbxproj') }}-
 
       - name: Install xcbeautify
         run: brew install xcbeautify
@@ -115,7 +115,7 @@ jobs:
         run: make build-example-sync
 
   SwiftFormat:
-    runs-on: macos-26
+    runs-on: macos-26-intel
     timeout-minutes: 15
 
     steps:
