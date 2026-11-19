@@ -25,16 +25,13 @@ public struct AudioBannerBuilder {
 
     // MARK: Public
 
-    /// `bottomBarsHeight` keeps the banner's toasts above the reader's bottom bars, the banner included.
-    public func build(
-        withListener listener: AudioBannerListener,
-        bottomBarsHeight: @escaping @MainActor () -> CGFloat
-    ) -> (UIViewController, AudioBannerViewModel) {
+    public func build(withListener listener: AudioBannerListener) -> (UIViewController, AudioBannerViewModel) {
         let viewModel = AudioBannerViewModel(
             analytics: container.analytics,
             reciterRetreiver: ReciterDataRetriever(),
             recentRecitersService: RecentRecitersService(),
             audioPlayer: QuranAudioPlayer(),
+            appIconService: container.appIconService(),
             downloader: QuranAudioDownloader(
                 baseURL: container.filesAppHost,
                 downloader: container.downloadManager
@@ -43,7 +40,7 @@ public struct AudioBannerBuilder {
             advancedAudioOptionsBuilder: AdvancedAudioOptionsBuilder()
         )
         let view = AudioBannerView(viewModel: viewModel)
-            .enableToastPresenter(bottomBarsHeight: bottomBarsHeight)
+            .enableToastPresenter()
         let viewController = UIHostingController(rootView: view)
         viewController.view.backgroundColor = nil
         if #available(iOS 16.4, *) {

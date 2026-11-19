@@ -11,6 +11,7 @@ import SwiftUI
 struct ImageDecorationsLayout {
     let verseHighlights: [VerseHighlightPlacement]
     let wordHighlight: WordHighlightPlacement?
+    let undimmedLineRects: [CGRect]?
     let suraHeaders: [SuraHeaderPlacement]
     let ayahMarkers: [AyahMarkerPlacement]
 
@@ -23,7 +24,10 @@ struct ImageDecorationsLayout {
     init(decorations: ImageDecorations, imageSize: CGSize, scale: WordFrameScale) {
         drawsAyahNumbersAndSuraHeaders = decorations.drawsAyahNumbersAndSuraHeaders
         ayahMarkers = decorations.ayahNumbers.map {
-            AyahMarkerPlacement(ayah: $0.ayah, frame: $0.scaledRectangle(imageSize: imageSize, scale: scale))
+            AyahMarkerPlacement(
+                ayah: $0.ayah,
+                frame: $0.scaledRectangle(imageSize: imageSize, widthRatio: decorations.ayahNumberWidthRatio, scale: scale)
+            )
         }
         suraHeaders = decorations.drawsAyahNumbersAndSuraHeaders ? decorations.suraHeaders.map {
             SuraHeaderPlacement(id: $0, frame: $0.rect.scaled(by: scale))
@@ -34,6 +38,11 @@ struct ImageDecorationsLayout {
                 let lineRects = Self.lineRects(of: decorations.wordFrames.wordFramesForVerse(verse), scale: scale)
                 return lineRects.isEmpty ? nil : VerseHighlightPlacement(id: verse, lineRects: lineRects, color: color)
             }
+        undimmedLineRects = decorations.undimmedVerses.map { undimmedVerses in
+            undimmedVerses.sorted().flatMap {
+                Self.lineRects(of: decorations.wordFrames.wordFramesForVerse($0), scale: scale)
+            }
+        }
         wordHighlight = decorations.wordHighlight
             .flatMap { decorations.wordFrames.wordFrameForWord($0) }
             .map { WordHighlightPlacement(frame: $0.rect.scaled(by: scale), color: VerseOverlays.wordHighlightColor) }

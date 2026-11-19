@@ -45,8 +45,9 @@
 "quran.page.name" = "%@-بەت";
 // A page location: %1$@ is the name of the page's first surah and %2$@ is the localized page, such as "At-Tawbah, Page 200". Translators may reorder the placeholders.
 "quran.page.location" = "%1$@، %2$@";
-// A range of Quran references: %1$@ is the start and %2$@ is the end, such as "Al-Baqarah, Ayah 255 - Al-Baqarah, Ayah 257". Translators may reorder the placeholders.
-"quran.range" = "%1$@ - %2$@";
+// Ayahs across surahs: %1$@ is the start and %2$@ is the end reference, such as "Al-Baqarah 2:286 – Āli-ʿImrān 3:10". Ayahs in one surah are written "Al-Baqarah 2:1–10" without this format. Translators may reorder the placeholders.
+// Metadata: Translated by AI; human review required.
+"quran.range" = "%1$@ – %2$@";
 // A hizb reference: %@ is the localized hizb number, such as "Hizb 3".
 "quran.hizb.name" = "ھىزب %@";
 // A quarter reference: %1$@ is the fraction (¼, ½ or ¾) and %2$@ is the hizb reference, such as "¼ Hizb 3". Translators may reorder the placeholders.
@@ -104,6 +105,9 @@
 "setting.donate" = "ئىئانە قىلىش";
 // Metadata: Translated by ChatGPT; human review required.
 "setting.share_app" = "ئەپنى ھەمبەھىرلەڭ...";
+// Settings row that opens the Quran.com privacy policy.
+// Metadata: Translated by AI; human review required.
+"setting.privacy_policy" = "مەخپىيەتلىك سىياسىتى";
 // Metadata: Translated by ChatGPT; human review required.
 "setting.app_version" = "ئەپ نەشرى";
 
@@ -137,6 +141,9 @@
 "menu.ayahIndicators.readingBookmark" = "ئوقۇش خەتكۈچى";
 "menu.ayahIndicators.none" = "ھېچقايسىسى";
 "menu.arabicText" = "ئەرەبچە تېكىست";
+"menu.footnotes" = "بەت ئاستى ئىزاھى تېكىستى";
+"menu.rotate_to_portrait" = "تىك ھالەتكە ئايلاندۇرۇش";
+"menu.rotate_to_landscape" = "توغرا ھالەتكە ئايلاندۇرۇش";
 // Metadata: Translated by ChatGPT; human review required.
 "menu.theme_settings" = "ئۆرنەك ۋە تەڭشەك";
 
@@ -230,10 +237,12 @@
 
 // Metadata: Translated by ChatGPT; human review required.
 "audio.playing.action.modify" = "تەھرىرلەڭ";
-// Metadata: Translated by ChatGPT; human review required.
-"audio.playing.message" = "%@ دىن %@ گىچە ئاۋاز قويۇلۇۋاتىدۇ";
-// Metadata: Translated by ChatGPT; human review required.
-"audio.downloading.message" = "%@ دىن %@ گىچە ئاۋاز چۈشۈرۈلۈۋاتىدۇ";
+// Toast when audio starts playing: %@ is the ayah range, such as "Al-Baqarah 2:1–10", or a surah name when the whole surah plays.
+// Metadata: Translated by AI; human review required.
+"audio.playing.toast" = "%@ قويۇلۇۋاتىدۇ";
+// Toast when audio starts downloading before it plays: %@ is the ayah range, such as "Al-Baqarah 2:1–10", or a surah name for a whole surah.
+// Metadata: Translated by AI; human review required.
+"audio.downloading.toast" = "%@ ئاۋازى چۈشۈرۈلۈۋاتىدۇ";
 
 // Metadata: Translated by ChatGPT; human review required.
 "audio.playing-verses.label" = "ئايەتلەرنى قويۇش";
@@ -254,8 +263,6 @@
 
 // MARK: - Notes
 
-"notes.sync.title" = "ئىزاھاتلىرىڭىزنى ماسقەدەملەش";
-"notes.sync.body" = "ئىزاھاتلىرىڭىزنى بارلىق ئۈسكۈنىلەردە ساقلاش ئۈچۈن Quran.com غا كىرىڭ.";
 "notes.sync.no-data.title" = "تېخى ئىزاھات يوق";
 "notes.sync.no-data.text" = "ئوقۇۋاتقاندا بىر ئايەتنى بېسىپ تۇرۇڭ، ئاندىن تۇنجى ئىزاھاتىڭىزنى يېزىش ئۈچۈن «قەيتىملىك قوشۇش» نى بېسىڭ.";
 
@@ -279,6 +286,18 @@
 "notes.search.no-results.title" = "\"%@\" گە ماس كېلىدىغان خاتىرە يوق";
 // Metadata: Translated by ChatGPT; human review required.
 "notes.search.no-results.text" = "ساقلىغان خاتىرىڭىزدىكى باشقا سۆزنى ياكى سۈرە نامىنى سىناپ كۆرۈڭ.";
+// Title of the Notes card telling upgraders that their highlights moved to the Bookmarks tab.
+// Metadata: Translated by AI; human review required.
+"notes.highlights-tip.title" = "يورۇتۇشلار ئەمدى خەتكۈچلەردە";
+// Body of the Notes card about highlights moving to the Bookmarks tab.
+// Metadata: Translated by AI; human review required.
+"notes.highlights-tip.text" = "ئىزاھاتلار پەقەت سىز يازغانلارنىلا ساقلايدۇ. يورۇتقان ئايەتلىرىڭىز رەڭ بويىچە خەتكۈچلەر بەتكۈچىدە.";
+// Opens the Bookmarks tab from the Notes card and empty state.
+// Metadata: Translated by AI; human review required.
+"notes.highlights.show" = "يورۇتۇشلارنى كۆرسىتىش";
+// Notes empty state line when the user has highlights.
+// Metadata: Translated by AI; human review required.
+"notes.no-data.highlights.text" = "يورۇتۇشلىرىڭىز خەتكۈچلەر بەتكۈچىدە.";
 
 // MARK: - Ayah Menu
 
@@ -476,6 +495,14 @@
 // Metadata: Translated by ChatGPT; human review required.
 "audio.streaming.title" = "ئاۋازنى تور ئارقىلىق قويۇش";
 // Metadata: Translated by AI; human review required.
+"audio.dim-other-ayahs.title" = "باشقا ئايەتلەرنى سۇسلاشتۇرۇش";
+// Footer under the Dim Other Ayahs toggle in Audio Options: what it does, then that it applies without tapping Play.
+// Metadata: Translated by AI; human review required.
+"audio.dim-other-ayahs.footer" = "ئاۋاز قويۇلۇۋاتقاندا، ئوقۇلۇۋاتقان ئايەتتىن باشقا ھەممە ئايەتلەرنى سۇسلاشتۇرىدۇ. دەرھال قوللىنىلىدۇ.";
+// Footer under the Dim Other Ayahs toggle in Settings › Audio Playback.
+// Metadata: Translated by AI; human review required.
+"audio.dim-other-ayahs.description" = "ئاۋاز قويۇلۇۋاتقاندا، ئوقۇلۇۋاتقان ئايەتتىن باشقا ھەممە ئايەتلەرنى سۇسلاشتۇرىدۇ.";
+// Metadata: Translated by AI; human review required.
 "audio.playback.title" = "ئاۋاز قويۇش";
 // Metadata: Translated by AI; human review required.
 "audio.playback.footer.page" = "قويۇش نۆۋەتتىكى بەتنىڭ ئاخىرىغىچە داۋاملىشىدۇ. تور ئارقىلىق قويۇش تاقالغاندا، ئۇ ئايەتلەر ئالدى بىلەن چۈشۈرۈلىدۇ؛ تور ئارقىلىق قويۇش بوشلۇق تېجەيدۇ، ئەمما تور ئۇلىنىشىنى تەلەپ قىلىدۇ.";
@@ -501,12 +528,19 @@
 // Ayah menu
 // Metadata: Translated by ChatGPT; human review required.
 "ayah.menu.notes-count" = "خاتىرىلەر (%d)";
+// Metadata: Translated by AI; human review required.
+"ayah.menu.reading-bookmark.moved-to" = "ئوقۇش خەتكۈچى %@ غا يۆتكەلدى";
+// Badge on the ayah menu's Reading Bookmark row.
+// Metadata: Translated by AI; human review required.
+"ayah.menu.reading-bookmark.new" = "يېڭى";
 // Metadata: Translated by ChatGPT; human review required.
-"ayah.menu.reading-bookmark.moved" = "ئوقۇش خەتكۈچى %@ دىن %@ غا يۆتكەلدى";
+"ayah.menu.reading-bookmark.moved.explanation" = "ئوقۇش خەتكۈچلىرىنى يېڭىسىنى قوشماي، يۆتكەيسىز. ئايەتلەرنى ساقلاش ئۈچۈن ئۇلارنى توپلامغا ساقلاڭ.";
 // Metadata: Translated by ChatGPT; human review required.
 "ayah.menu.reading-bookmark.removed" = "%@ دىكى ئوقۇش خەتكۈچى ئۆچۈرۈلدى";
 // Metadata: Translated by ChatGPT; human review required.
 "ayah.menu.reading-bookmark.saved" = "ئوقۇش خەتكۈچى %@ دا ساقلاندى";
+// Metadata: Translated by ChatGPT; human review required.
+"ayah.menu.reading-bookmark.saved.explanation" = "ئوقۇغانسېرى ئۇنى يۆتكەڭ. سىزدە ئۈچ بار، ھەر بىر ئوقۇش ئۈچۈن بىردىن.";
 // Metadata: Translated by ChatGPT; human review required.
 "ayah.menu.reading-bookmark.single-ayah-only" = "بىر ئايەتنى تاللاڭ";
 // Metadata: Translated by ChatGPT; human review required.
@@ -519,6 +553,12 @@
 "bookmarks.collections" = "توپلاملار";
 // Metadata: Translated by ChatGPT; human review required.
 "bookmarks.collections.add" = "توپلام قوشۇش";
+// Delete All confirmation on a highlight color's page. %@ is the color's name as shown on the page, such as Green.
+// Metadata: Translated by AI; human review required.
+"bookmarks.collections.ayahs.delete-all.colored.confirmation" = "«%@» رەڭدە يورۇتۇلغان بارلىق ئايەتلەرنى چىقىرىۋەتمەكچى بولغىنىڭىزغا ئىشىنەمسىز؟";
+// Delete All confirmation on a collection's page. %@ is the collection's name.
+// Metadata: Translated by AI; human review required.
+"bookmarks.collections.ayahs.delete-all.confirmation" = "«%@» دىكى بارلىق ئايەتلەرنى چىقىرىۋەتمەكچى بولغىنىڭىزغا ئىشىنەمسىز؟";
 // Metadata: Translated by ChatGPT; human review required.
 "bookmarks.collections.ayahs.delete-hint" = "خەتكۈچنى ئۆچۈرۈش ئۈچۈن سىيرىڭ.";
 // Metadata: Translated by ChatGPT; human review required.
@@ -570,14 +610,23 @@
 "bookmarks.editor.collection.unselected" = "تاللانمىغان";
 // Metadata: Translated by ChatGPT; human review required.
 "bookmarks.editor.error.highlight-unavailable" = "يورۇتۇش رەڭلىرى تېخى يۈكلىنىۋاتىدۇ. قايتا سىناڭ.";
+// One-time intro at the top of the Save Ayah sheet that explains collections.
+// Metadata: Translated by AI; human review required.
+"bookmarks.editor.intro" = "ئايەتلەرنى ياقتۇرىدىغانلارغا ياكى دۇئالار، يادلاش تەكرارى قاتارلىق ئۆز توپلاملىرىڭىزغا ساقلاڭ. يورۇتۇش رەڭلىرىمۇ مۇشۇ يەردە.";
 // Metadata: Translated by ChatGPT; human review required.
 "bookmarks.old-page-bookmarks" = "كونا بەت خەتكۈچلىرى";
-// Metadata: Translated by ChatGPT; human review required.
-"bookmarks.sync.action" = "كىرىش";
-// Metadata: Translated by ChatGPT; human review required.
-"bookmarks.sync.body" = "توپلاملىرىڭىزنى بارلىق ئۈسكۈنىلەردە ساقلاش ئۈچۈن Quran.com غا كىرىڭ.";
-// Metadata: Translated by ChatGPT; human review required.
-"bookmarks.sync.title" = "توپلاملىرىڭىزنى ماسقەدەملەش";
+// Header of the Old Page Bookmarks collection.
+// Metadata: Translated by AI; human review required.
+"bookmarks.old-page-bookmarks.explanation" = "بەت خەتكۈچلىرىڭىزدىن ساقلانغان. ھەر بىر بەت ئەمدى ئۇنىڭ تۇنجى ئايىتى بولدى.";
+// Title of the Bookmarks card telling upgraders where their 3.0 page bookmarks went.
+// Metadata: Translated by AI; human review required.
+"bookmarks.old-page-bookmarks-tip.title" = "بەت خەتكۈچلىرىڭىز بۇ يەردە";
+// Body of the Bookmarks card about 3.0 page bookmarks. %@ is the app version, such as 3.0.
+// Metadata: Translated by AI; human review required.
+"bookmarks.old-page-bookmarks-tip.text" = "%@ نەشرىدە خەتكۈچلىگەن ھەر بىر بەت ئەمدى «كونا بەت خەتكۈچلىرى» ئىچىدە شۇ بەتنىڭ تۇنجى ئايىتى بولۇپ تۇرىدۇ. ئوقۇۋاتقاندا ئورنىڭىزنى ساقلاش ئۈچۈن ئوقۇش خەتكۈچلىرىنى ئىشلىتىڭ.";
+// Button on the Bookmarks card that opens the Old Page Bookmarks collection.
+// Metadata: Translated by AI; human review required.
+"bookmarks.old-page-bookmarks.open" = "كونا بەت خەتكۈچلىرىنى ئېچىش";
 
 // Highlight colors
 // Metadata: Translated by ChatGPT; human review required.
@@ -664,6 +713,8 @@
 "translation.text.footnote-number" = "[%d]";
 // Metadata: Translated by ChatGPT; human review required.
 "translation.text.footnote-title" = "بەت ئاستى ئىزاھى #%d";
+"translation.text.verse-reference.toast" = "%@ كۆرسىتىلىۋاتىدۇ";
+"translation.text.verse-reference.back" = "قايتىش";
 
 /* Audio banner options summary */
 "audio.summary.verse" = "ئايەت %@";
@@ -684,6 +735,12 @@
 // Reading bookmarks menu explanation below its title.
 // Metadata: Translated by AI; human review required.
 "bookmarks.reading.description" = "ھەر بىر ئوقۇش ئۈچۈن بىرنى ئىشلىتىڭ، مەسىلەن خەتمە ياكى يادلاش ئۈچۈن.";
+// Reading bookmarks menu heading above the explanation, shown while no reading bookmark is placed.
+// Metadata: Translated by AI; human review required.
+"bookmarks.reading.first-run.title" = "ئەڭ كۆپ ئۈچ ئوقۇشتا ئورنىڭىزنى ساقلاڭ";
+// Subtitle of the suggested reading bookmark row, shown while no reading bookmark is placed.
+// Metadata: Translated by AI; human review required.
+"bookmarks.reading.first-run.suggested" = "تۇنجى ئوقۇشىڭىز ئۈچۈن تەۋسىيە قىلىنىدۇ";
 // Reading bookmark row subtitle when the bookmark is at the current ayah or page.
 // Metadata: Translated by AI; human review required.
 "bookmarks.reading.saved-here" = "بۇ يەردە ساقلاندى";
@@ -871,3 +928,44 @@
 "sync.sign-out.review" = "تەكشۈرۈش";
 // Button on an item that doesn't sync: opens its note editor or renames its collection.
 "sync.held.edit" = "تەھرىرلەش";
+
+// MARK: - Ayah ranges
+
+// How VoiceOver reads ayahs across surahs: %1$@ is the start and %2$@ is the end ayah, such as "Al-Baqarah, Ayah 286 to Āli-ʿImrān, Ayah 10". Translators may reorder the placeholders.
+// Metadata: Translated by AI; human review required.
+"quran.range.spoken" = "%1$@تىن %2$@كىچە";
+// How VoiceOver reads ayahs in one surah: %1$@ is the first and %2$@ is the last localized ayah number, such as "Ayahs 1 to 10" in "Al-Baqarah, Ayahs 1 to 10". Translators may reorder the placeholders.
+// Metadata: Translated by AI; human review required.
+"quran.ayah.number-range" = "%1$@-ئايەتتىن %2$@-ئايەتكىچە";
+// Sign-in reminder toast title after a signed-out user saves a new note.
+"sync.nudge.note-saved" = "ئىزاھات ساقلاندى";
+// Sign-in reminder toast title after a signed-out user creates a collection.
+"sync.nudge.collection-created" = "توپلام قۇرۇلدى";
+// Sign-in reminder toast subtitle under "Note saved" or "Collection created": "it" is the note or collection.
+"sync.nudge.subtitle" = "ئۇنى Quran.com ۋە بارلىق ئۈسكۈنىلىرىڭىزدە كۆرۈش ئۈچۈن كىرىڭ.";
+// Sign-in reminder toast button that starts signing in to Quran.com.
+"sync.nudge.sign-in" = "كىرىش";
+// What's New sync reveal chip, before an arrow and "Quran.com": sync is moving from iCloud to Quran.com. Keep "iCloud" in English.
+"new.sync_reveal.chip.from_icloud" = "iCloud دىن يۆتكىلىش";
+// How VoiceOver reads the What's New sync reveal chip. Keep "iCloud" and "Quran.com" in English.
+"new.sync_reveal.chip.accessibility" = "iCloud دىن Quran.com غا يۆتكىلىش";
+// What's New sync reveal title: the user's Quran reading is now connected across their devices and Quran.com.
+"new.sync_reveal.title" = "قۇرئانىڭىز ھەمىشە ئۇلىنىشتا";
+// What's New sync reveal benefit title, after a sync icon: the user's reading place follows them on every device.
+"new.sync_reveal.every_device.title" = "ھەر بىر ئۈسكۈنىدە ئوقۇغان يېرىڭىز";
+// What's New sync reveal benefit detail under "Your place on every device". Keep "iCloud", "Quran.com" and "Quran ID" in English.
+"new.sync_reveal.every_device.subtitle" = "خەتكۈچ، ئىزاھات ۋە ئوقۇش ئىلگىرىلىشىڭىز ھەقسىز Quran ID ئارقىلىق iCloud دىن Quran.com غا يۆتكىلىدۇ.";
+// What's New sync reveal benefit title, after a book icon: study more on Quran.com without losing the reading place.
+"new.sync_reveal.go_deeper.title" = "ئورنىڭىزنى يوقاتماي چوڭقۇرلاپ ئوقۇڭ";
+// What's New sync reveal benefit detail under "Go deeper without losing your place": Quran.com opens tafsir, reflections and lessons at the ayah the user stopped on. Keep "Quran.com" in English.
+"new.sync_reveal.go_deeper.subtitle" = "Quran.com دىكى تەپسىر، تەپەككۇر ۋە دەرسلەر، توختىغان ئايىتىڭىزدە.";
+// What's New sync reveal button that starts signing in to Quran.com with a Quran ID account. Keep "Quran ID" in English.
+"new.sync_reveal.sign_in" = "Quran ID بىلەن داۋاملاشتۇرۇش";
+// What's New sync reveal button that closes it without signing in.
+"new.sync_reveal.not_now" = "ھازىر ئەمەس";
+// What's New sync reveal footnote on iPhone.
+"new.sync_reveal.footnote.iphone" = "كىرمىسىڭىز، خەتكۈچلىرىڭىز مۇشۇ iPhone دا قالىدۇ.";
+// What's New sync reveal footnote on iPad.
+"new.sync_reveal.footnote.ipad" = "كىرمىسىڭىز، خەتكۈچلىرىڭىز مۇشۇ iPad تا قالىدۇ.";
+// What's New sync reveal footnote on Mac.
+"new.sync_reveal.footnote.mac" = "كىرمىسىڭىز، خەتكۈچلىرىڭىز مۇشۇ Mac تا قالىدۇ.";

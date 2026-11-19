@@ -40,8 +40,9 @@
 "quran.page.name" = "Trang %@";
 // A page location: %1$@ is the name of the page's first surah and %2$@ is the localized page, such as "At-Tawbah, Page 200". Translators may reorder the placeholders.
 "quran.page.location" = "%1$@, %2$@";
-// A range of Quran references: %1$@ is the start and %2$@ is the end, such as "Al-Baqarah, Ayah 255 - Al-Baqarah, Ayah 257". Translators may reorder the placeholders.
-"quran.range" = "%1$@ - %2$@";
+// Ayahs across surahs: %1$@ is the start and %2$@ is the end reference, such as "Al-Baqarah 2:286 – Āli-ʿImrān 3:10". Ayahs in one surah are written "Al-Baqarah 2:1–10" without this format. Translators may reorder the placeholders.
+// Metadata: Translated by AI; human review required.
+"quran.range" = "%1$@ – %2$@";
 // A hizb reference: %@ is the localized hizb number, such as "Hizb 3".
 "quran.hizb.name" = "Hizb %@";
 // A quarter reference: %1$@ is the fraction (¼, ½ or ¾) and %2$@ is the hizb reference, such as "¼ Hizb 3". Translators may reorder the placeholders.
@@ -85,6 +86,9 @@
 // Metadata: Translated by ChatGPT; human review required.
 "setting.donate" = "Quyên góp";
 "setting.share_app" = "Chia sẻ ứng dụng...";
+// Settings row that opens the Quran.com privacy policy.
+// Metadata: Translated by AI; human review required.
+"setting.privacy_policy" = "Chính sách quyền riêng tư";
 "setting.app_version" = "Phiên bản ứng dụng";
 
 // MARK: - Quran Menu
@@ -107,6 +111,9 @@
 "menu.ayahIndicators.readingBookmark" = "Dấu trang đọc";
 "menu.ayahIndicators.none" = "Không";
 "menu.arabicText" = "Văn bản tiếng Ả Rập";
+"menu.footnotes" = "Văn bản chú thích";
+"menu.rotate_to_portrait" = "Xoay dọc";
+"menu.rotate_to_landscape" = "Xoay ngang";
 // Metadata: Translated by ChatGPT; human review required.
 "menu.theme_settings" = "Chủ đề & Cài đặt";
 
@@ -190,8 +197,12 @@
 // MARK: - Audio
 
 "audio.playing.action.modify" = "Sửa";
-"audio.playing.message" = "Phát âm thanh từ %@ đến %@";
-"audio.downloading.message" = "Đang tải âm thanh từ %@ đến %@";
+// Toast when audio starts playing: %@ is the ayah range, such as "Al-Baqarah 2:1–10", or a surah name when the whole surah plays.
+// Metadata: Translated by AI; human review required.
+"audio.playing.toast" = "Đang phát %@";
+// Toast when audio starts downloading before it plays: %@ is the ayah range, such as "Al-Baqarah 2:1–10", or a surah name for a whole surah.
+// Metadata: Translated by AI; human review required.
+"audio.downloading.toast" = "Đang tải âm thanh %@";
 
 "audio.playing-verses.label" = "Câu đang Phát";
 "audio.adjust-end-verse-to-the-end.label" = "Điều chỉnh câu cuối thành kết thúc của";
@@ -206,8 +217,6 @@
 
 // MARK: - Notes
 
-"notes.sync.title" = "Đồng bộ ghi chú của bạn";
-"notes.sync.body" = "Đăng nhập vào Quran.com để giữ ghi chú của bạn khả dụng trên mọi thiết bị.";
 "notes.sync.no-data.title" = "Chưa có ghi chú";
 "notes.sync.no-data.text" = "Khi đọc, hãy chạm và giữ một ayah, sau đó chạm vào “Thêm Ghi chú” để viết ghi chú đầu tiên.";
 
@@ -224,6 +233,18 @@
 "notes.search.no-results.title" = "Không có ghi chú nào khớp với \"%@\"";
 // Metadata: Translated by ChatGPT; human review required.
 "notes.search.no-results.text" = "Hãy thử một từ khác từ ghi chú bạn đã lưu hoặc tên sura.";
+// Title of the Notes card telling upgraders that their highlights moved to the Bookmarks tab.
+// Metadata: Translated by AI; human review required.
+"notes.highlights-tip.title" = "Tô sáng giờ nằm trong Đánh dấu";
+// Body of the Notes card about highlights moving to the Bookmarks tab.
+// Metadata: Translated by AI; human review required.
+"notes.highlights-tip.text" = "Ghi chú chỉ giữ những gì bạn viết. Các ayah bạn tô sáng nằm trong tab Đánh dấu, theo màu.";
+// Opens the Bookmarks tab from the Notes card and empty state.
+// Metadata: Translated by AI; human review required.
+"notes.highlights.show" = "Hiện tô sáng";
+// Notes empty state line when the user has highlights.
+// Metadata: Translated by AI; human review required.
+"notes.no-data.highlights.text" = "Các tô sáng của bạn nằm trong tab Đánh dấu.";
 
 // MARK: - Ayah Menu
 
@@ -385,6 +406,14 @@
 // Metadata: Translated by ChatGPT; human review required.
 "audio.streaming.title" = "Phát trực tuyến âm thanh";
 // Metadata: Translated by AI; human review required.
+"audio.dim-other-ayahs.title" = "Làm mờ các ayah khác";
+// Footer under the Dim Other Ayahs toggle in Audio Options: what it does, then that it applies without tapping Play.
+// Metadata: Translated by AI; human review required.
+"audio.dim-other-ayahs.footer" = "Khi đang phát âm thanh, làm mờ mọi ayah trừ ayah đang được đọc. Áp dụng ngay lập tức.";
+// Footer under the Dim Other Ayahs toggle in Settings › Audio Playback.
+// Metadata: Translated by AI; human review required.
+"audio.dim-other-ayahs.description" = "Khi đang phát âm thanh, làm mờ mọi ayah trừ ayah đang được đọc.";
+// Metadata: Translated by AI; human review required.
 "audio.playback.title" = "Phát âm thanh";
 // Metadata: Translated by AI; human review required.
 "audio.playback.footer.page" = "Phát tiếp đến cuối trang hiện tại. Khi tắt phát trực tuyến, các câu đó sẽ được tải xuống trước; phát trực tuyến tiết kiệm dung lượng nhưng cần kết nối internet.";
@@ -410,12 +439,19 @@
 // Ayah Menu
 // Metadata: Translated by ChatGPT; human review required.
 "ayah.menu.notes-count" = "Ghi chú (%d)";
+// Metadata: Translated by AI; human review required.
+"ayah.menu.reading-bookmark.moved-to" = "Dấu trang đọc đã được chuyển đến %@";
+// Badge on the ayah menu's Reading Bookmark row.
+// Metadata: Translated by AI; human review required.
+"ayah.menu.reading-bookmark.new" = "Mới";
 // Metadata: Translated by ChatGPT; human review required.
-"ayah.menu.reading-bookmark.moved" = "Dấu trang đọc đã được chuyển từ %@ đến %@";
+"ayah.menu.reading-bookmark.moved.explanation" = "Bạn di chuyển dấu trang đọc thay vì thêm dấu mới. Để giữ các ayah, hãy lưu chúng vào một bộ sưu tập.";
 // Metadata: Translated by ChatGPT; human review required.
 "ayah.menu.reading-bookmark.removed" = "Dấu trang đọc tại %@ đã được xóa";
 // Metadata: Translated by ChatGPT; human review required.
 "ayah.menu.reading-bookmark.saved" = "Dấu trang đọc đã được lưu tại %@";
+// Metadata: Translated by ChatGPT; human review required.
+"ayah.menu.reading-bookmark.saved.explanation" = "Hãy di chuyển nó khi bạn đọc. Bạn có ba dấu trang, mỗi dấu cho một lần đọc.";
 // Metadata: Translated by ChatGPT; human review required.
 "ayah.menu.reading-bookmark.single-ayah-only" = "Chọn một ayah";
 // Metadata: Translated by ChatGPT; human review required.
@@ -428,6 +464,12 @@
 "bookmarks.collections" = "Bộ sưu tập";
 // Metadata: Translated by ChatGPT; human review required.
 "bookmarks.collections.add" = "Thêm bộ sưu tập";
+// Delete All confirmation on a highlight color's page. %@ is the color's name as shown on the page, such as Green.
+// Metadata: Translated by AI; human review required.
+"bookmarks.collections.ayahs.delete-all.colored.confirmation" = "Bạn có chắc muốn xóa tất cả các tô sáng màu “%@” không?";
+// Delete All confirmation on a collection's page. %@ is the collection's name.
+// Metadata: Translated by AI; human review required.
+"bookmarks.collections.ayahs.delete-all.confirmation" = "Bạn có chắc muốn xóa tất cả các ayah khỏi “%@” không?";
 // Metadata: Translated by ChatGPT; human review required.
 "bookmarks.collections.ayahs.delete-hint" = "Vuốt dấu trang sang trái để xóa.";
 // Metadata: Translated by ChatGPT; human review required.
@@ -479,14 +521,23 @@
 "bookmarks.editor.collection.unselected" = "Chưa chọn";
 // Metadata: Translated by ChatGPT; human review required.
 "bookmarks.editor.error.highlight-unavailable" = "Màu tô sáng vẫn đang tải. Vui lòng thử lại.";
+// One-time intro at the top of the Save Ayah sheet that explains collections.
+// Metadata: Translated by AI; human review required.
+"bookmarks.editor.intro" = "Lưu các ayah vào Yêu thích hoặc bộ sưu tập của riêng bạn, như Dua hay Ôn hifz. Màu tô sáng cũng ở đây.";
 // Metadata: Translated by ChatGPT; human review required.
 "bookmarks.old-page-bookmarks" = "Dấu trang trang cũ";
-// Metadata: Translated by ChatGPT; human review required.
-"bookmarks.sync.action" = "Đăng nhập";
-// Metadata: Translated by ChatGPT; human review required.
-"bookmarks.sync.body" = "Đăng nhập vào Quran.com để giữ bộ sưu tập của bạn khả dụng trên mọi thiết bị.";
-// Metadata: Translated by ChatGPT; human review required.
-"bookmarks.sync.title" = "Đồng bộ bộ sưu tập của bạn";
+// Header of the Old Page Bookmarks collection.
+// Metadata: Translated by AI; human review required.
+"bookmarks.old-page-bookmarks.explanation" = "Được lưu từ các dấu trang theo trang của bạn. Mỗi trang giờ là ayah đầu tiên của trang đó.";
+// Title of the Bookmarks card telling upgraders where their 3.0 page bookmarks went.
+// Metadata: Translated by AI; human review required.
+"bookmarks.old-page-bookmarks-tip.title" = "Các trang bạn đã đánh dấu ở đây";
+// Body of the Bookmarks card about 3.0 page bookmarks. %@ is the app version, such as 3.0.
+// Metadata: Translated by AI; human review required.
+"bookmarks.old-page-bookmarks-tip.text" = "Mỗi trang bạn đánh dấu trong phiên bản %@ giờ là ayah đầu tiên của trang đó, trong Dấu trang trang cũ. Để giữ vị trí khi đọc, hãy dùng dấu trang đọc.";
+// Button on the Bookmarks card that opens the Old Page Bookmarks collection.
+// Metadata: Translated by AI; human review required.
+"bookmarks.old-page-bookmarks.open" = "Mở Dấu trang trang cũ";
 
 // Highlight Colors
 // Metadata: Translated by ChatGPT; human review required.
@@ -573,6 +624,8 @@
 "translation.text.footnote-number" = "[%d]";
 // Metadata: Translated by ChatGPT; human review required.
 "translation.text.footnote-title" = "Chú thích #%d";
+"translation.text.verse-reference.toast" = "Đang hiển thị %@";
+"translation.text.verse-reference.back" = "Quay lại";
 
 /* Audio banner options summary */
 "audio.summary.verse" = "câu %@";
@@ -593,6 +646,12 @@
 // Reading bookmarks menu explanation below its title.
 // Metadata: Translated by AI; human review required.
 "bookmarks.reading.description" = "Dùng một dấu trang cho mỗi lần đọc, như khatmah hoặc học thuộc lòng của bạn.";
+// Reading bookmarks menu heading above the explanation, shown while no reading bookmark is placed.
+// Metadata: Translated by AI; human review required.
+"bookmarks.reading.first-run.title" = "Giữ vị trí của bạn trong tối đa ba lần đọc";
+// Subtitle of the suggested reading bookmark row, shown while no reading bookmark is placed.
+// Metadata: Translated by AI; human review required.
+"bookmarks.reading.first-run.suggested" = "Gợi ý cho lần đọc đầu tiên của bạn";
 // Reading bookmark row subtitle when the bookmark is at the current ayah or page.
 // Metadata: Translated by AI; human review required.
 "bookmarks.reading.saved-here" = "Đã lưu tại đây";
@@ -780,3 +839,44 @@
 "sync.sign-out.review" = "Xem lại";
 // Button on an item that doesn't sync: opens its note editor or renames its collection.
 "sync.held.edit" = "Sửa";
+
+// MARK: - Ayah ranges
+
+// How VoiceOver reads ayahs across surahs: %1$@ is the start and %2$@ is the end ayah, such as "Al-Baqarah, Ayah 286 to Āli-ʿImrān, Ayah 10". Translators may reorder the placeholders.
+// Metadata: Translated by AI; human review required.
+"quran.range.spoken" = "từ %1$@ đến %2$@";
+// How VoiceOver reads ayahs in one surah: %1$@ is the first and %2$@ is the last localized ayah number, such as "Ayahs 1 to 10" in "Al-Baqarah, Ayahs 1 to 10". Translators may reorder the placeholders.
+// Metadata: Translated by AI; human review required.
+"quran.ayah.number-range" = "Ayah %1$@ đến %2$@";
+// Sign-in reminder toast title after a signed-out user saves a new note.
+"sync.nudge.note-saved" = "Đã lưu ghi chú";
+// Sign-in reminder toast title after a signed-out user creates a collection.
+"sync.nudge.collection-created" = "Đã tạo bộ sưu tập";
+// Sign-in reminder toast subtitle under "Note saved" or "Collection created": "it" is the note or collection.
+"sync.nudge.subtitle" = "Đăng nhập để xem nó trên Quran.com và mọi thiết bị của bạn.";
+// Sign-in reminder toast button that starts signing in to Quran.com.
+"sync.nudge.sign-in" = "Đăng nhập";
+// What's New sync reveal chip, before an arrow and "Quran.com": sync is moving from iCloud to Quran.com. Keep "iCloud" in English.
+"new.sync_reveal.chip.from_icloud" = "Chuyển từ iCloud";
+// How VoiceOver reads the What's New sync reveal chip. Keep "iCloud" and "Quran.com" in English.
+"new.sync_reveal.chip.accessibility" = "Chuyển từ iCloud sang Quran.com";
+// What's New sync reveal title: the user's Quran reading is now connected across their devices and Quran.com.
+"new.sync_reveal.title" = "Quran của bạn, luôn kết nối";
+// What's New sync reveal benefit title, after a sync icon: the user's reading place follows them on every device.
+"new.sync_reveal.every_device.title" = "Chỗ đang đọc trên mọi thiết bị";
+// What's New sync reveal benefit detail under "Your place on every device". Keep "iCloud", "Quran.com" and "Quran ID" in English.
+"new.sync_reveal.every_device.subtitle" = "Dấu trang, ghi chú và tiến độ đọc chuyển từ iCloud sang Quran.com bằng Quran ID miễn phí của bạn.";
+// What's New sync reveal benefit title, after a book icon: study more on Quran.com without losing the reading place.
+"new.sync_reveal.go_deeper.title" = "Tìm hiểu sâu hơn mà không mất chỗ đang đọc";
+// What's New sync reveal benefit detail under "Go deeper without losing your place": Quran.com opens tafsir, reflections and lessons at the ayah the user stopped on. Keep "Quran.com" in English.
+"new.sync_reveal.go_deeper.subtitle" = "Tafseer, suy ngẫm và bài học trên Quran.com, ngay tại ayah bạn dừng lại.";
+// What's New sync reveal button that starts signing in to Quran.com with a Quran ID account. Keep "Quran ID" in English.
+"new.sync_reveal.sign_in" = "Tiếp tục với Quran ID";
+// What's New sync reveal button that closes it without signing in.
+"new.sync_reveal.not_now" = "Để sau";
+// What's New sync reveal footnote on iPhone.
+"new.sync_reveal.footnote.iphone" = "Nếu không đăng nhập, dấu trang của bạn chỉ ở trên iPhone này.";
+// What's New sync reveal footnote on iPad.
+"new.sync_reveal.footnote.ipad" = "Nếu không đăng nhập, dấu trang của bạn chỉ ở trên iPad này.";
+// What's New sync reveal footnote on Mac.
+"new.sync_reveal.footnote.mac" = "Nếu không đăng nhập, dấu trang của bạn chỉ ở trên Mac này.";

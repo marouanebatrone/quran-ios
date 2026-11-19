@@ -48,9 +48,6 @@ protocol QuranPresentable: UIViewController {
     func hideBars()
     func refreshBarScrollEdgeInteractions()
 
-    /// How far the reader's bars at the bottom, like the audio bar, reach above the window's bottom edge.
-    var bottomBarsHeight: CGFloat { get }
-
     func setVisiblePages(_ pages: [Page])
     #if QURAN_SYNC
     func updateReadingBookmark(_ bookmark: PlacedReadingBookmark?)
@@ -131,6 +128,12 @@ final class QuranInteractor: WordPointerListener, ContentListener, NoteEditorLis
     // MARK: - Audio Banner
 
     var visiblePages: [Page] { contentViewModel?.visiblePages ?? [] }
+
+    var canTogglePlayPause: Bool { audioBanner?.canTogglePlayPause ?? false }
+
+    func togglePlayPauseFromKeyboard() {
+        audioBanner?.togglePlayPauseFromKeyboard()
+    }
 
     func start() {
         #if QURAN_SYNC
@@ -331,10 +334,7 @@ final class QuranInteractor: WordPointerListener, ContentListener, NoteEditorLis
         in sourceView: UIView,
         at point: CGPoint
     ) {
-        let viewController = deps.readingBookmarkMenuBuilder.build(
-            ayah: ayah,
-            bottomBarsHeight: presenterBottomBarsHeight
-        )
+        let viewController = deps.readingBookmarkMenuBuilder.build(ayah: ayah)
         contentViewModel?.removeAyahMenuHighlight()
         presenter?.dismissPresentedViewController { [weak self] in
             self?.presenter?.presentAyahMenu(viewController, in: sourceView, at: point)
@@ -383,7 +383,8 @@ final class QuranInteractor: WordPointerListener, ContentListener, NoteEditorLis
             bookmarkedVerses: bookmarkedVerses,
             readingBookmark: verses.count == 1
                 ? deps.annotationsObserver.latestReadingBookmark(at: [.ayah(verses[0])])
-                : nil
+                : nil,
+            placedReadingBookmarks: deps.annotationsObserver.loadedReadingBookmarks
         )
         #else
         let input = AyahMenuInput(
@@ -446,8 +447,7 @@ final class QuranInteractor: WordPointerListener, ContentListener, NoteEditorLis
         }
         let viewController = deps.readingBookmarkMenuBuilder.build(
             page: firstPage,
-            pages: visiblePages,
-            bottomBarsHeight: presenterBottomBarsHeight
+            pages: visiblePages
         )
         presenter?.presentReadingBookmarkMenu(viewController)
     }
@@ -456,8 +456,7 @@ final class QuranInteractor: WordPointerListener, ContentListener, NoteEditorLis
         logger.info("Quran: present reading bookmarks from page \(page.pageNumber) ribbon")
         let viewController = deps.readingBookmarkMenuBuilder.build(
             page: page,
-            pages: visiblePages,
-            bottomBarsHeight: presenterBottomBarsHeight
+            pages: visiblePages
         )
         presenter?.presentReadingBookmarkMenu(viewController, in: sourceView, at: rect)
     }
@@ -526,10 +525,6 @@ final class QuranInteractor: WordPointerListener, ContentListener, NoteEditorLis
         }
     }
 
-    private var presenterBottomBarsHeight: @MainActor () -> CGFloat {
-        { [weak presenter] in presenter?.bottomBarsHeight ?? 0 }
-    }
-
     #if !QURAN_SYNC
     private var isBookmarkMutationInFlight = false
     private var pageBookmarks: [PageBookmark] = [] {
@@ -546,10 +541,7 @@ final class QuranInteractor: WordPointerListener, ContentListener, NoteEditorLis
     }
 
     private func loadContent() {
-        let (viewController, viewModel) = deps.audioBannerBuilder.build(
-            withListener: self,
-            bottomBarsHeight: presenterBottomBarsHeight
-        )
+        let (viewController, viewModel) = deps.audioBannerBuilder.build(withListener: self)
         audioBanner = viewModel
         presenter?.presentAudioBanner(viewController)
 

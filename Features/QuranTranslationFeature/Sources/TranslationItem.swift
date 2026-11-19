@@ -21,6 +21,7 @@ enum TranslationItemId: Hashable, Sendable {
     case translator(AyahNumber, translationId: Translation.ID)
     case translationReference(AyahNumber, translationId: Translation.ID)
     case translationTextChunk(AyahNumber, translationId: Translation.ID, chunkIndex: Int)
+    case translationFootnoteChunk(AyahNumber, translationId: Translation.ID, footnoteIndex: Int, chunkIndex: Int)
 
     var ayah: AyahNumber? {
         switch self {
@@ -33,7 +34,8 @@ enum TranslationItemId: Hashable, Sendable {
              .verseNumber(let ayahNumber),
              .translator(let ayahNumber, _),
              .translationReference(let ayahNumber, _),
-             .translationTextChunk(let ayahNumber, _, _):
+             .translationTextChunk(let ayahNumber, _, _),
+             .translationFootnoteChunk(let ayahNumber, _, _, _):
             ayahNumber
         }
     }
@@ -98,6 +100,34 @@ struct TranslationTextChunk: Identifiable & Hashable {
     var id: TranslationItemId { .translationTextChunk(verse, translationId: translation.id, chunkIndex: chunkIndex) }
 }
 
+struct TranslationFootnoteChunk: Identifiable & Hashable {
+    let verse: AyahNumber
+    let translation: Translation
+    let footnoteIndex: Int
+    /// The footnote's marker, such as "[1]"; first chunk only.
+    let marker: String?
+    let text: String
+    /// The verse references in `text` that the reader can follow.
+    let verseReferences: [FootnoteVerseReference]
+    let chunks: [Range<String.Index>]
+    let chunkIndex: Int
+
+    let translationFontSize: FontSize
+
+    var id: TranslationItemId {
+        .translationFootnoteChunk(verse, translationId: translation.id, footnoteIndex: footnoteIndex, chunkIndex: chunkIndex)
+    }
+}
+
+extension TranslationString {
+    /// The footnote without its surrounding brackets and whitespace.
+    func footnoteText(at index: Int) -> String {
+        footnotes[index].trimmingCharacters(in: Self.footnoteTrimmedCharacters)
+    }
+
+    private static let footnoteTrimmedCharacters = CharacterSet(charactersIn: "[]").union(.whitespacesAndNewlines)
+}
+
 struct TranslationReferenceVerse: Identifiable & Hashable {
     let verse: AyahNumber
 
@@ -118,16 +148,23 @@ struct TranslatorText: Identifiable & Hashable {
     var id: TranslationItemId { .translator(verse, translationId: translation.id) }
 }
 
+/// A verse row's highlight and dimming.
+struct TranslationVerseDecoration: Hashable {
+    var color: Color?
+    var isDimmed = false
+}
+
 enum TranslationItem: Identifiable & Hashable {
     case pageHeader(TranslationPageHeader)
     case pageFooter(TranslationPageFooter)
-    case verseSeparator(TranslationVerseSeparator, Color?)
-    case suraName(TranslationSuraName, Color?)
-    case arabicText(TranslationArabicText, Color?)
-    case verseNumber(TranslationVerseNumber, Color?)
-    case translationTextChunk(TranslationTextChunk, Color?)
-    case translationReferenceVerse(TranslationReferenceVerse, Color?)
-    case translatorText(TranslatorText, Color?)
+    case verseSeparator(TranslationVerseSeparator, TranslationVerseDecoration)
+    case suraName(TranslationSuraName, TranslationVerseDecoration)
+    case arabicText(TranslationArabicText, TranslationVerseDecoration)
+    case verseNumber(TranslationVerseNumber, TranslationVerseDecoration)
+    case translationTextChunk(TranslationTextChunk, TranslationVerseDecoration)
+    case translationFootnoteChunk(TranslationFootnoteChunk, TranslationVerseDecoration)
+    case translationReferenceVerse(TranslationReferenceVerse, TranslationVerseDecoration)
+    case translatorText(TranslatorText, TranslationVerseDecoration)
 
     var id: TranslationItemId {
         switch self {
@@ -138,23 +175,25 @@ enum TranslationItem: Identifiable & Hashable {
         case .arabicText(let item, _): return item.id
         case .verseNumber(let item, _): return item.id
         case .translationTextChunk(let item, _): return item.id
+        case .translationFootnoteChunk(let item, _): return item.id
         case .translationReferenceVerse(let item, _): return item.id
         case .translatorText(let item, _): return item.id
         }
     }
 
-    var color: Color? {
+    var decoration: TranslationVerseDecoration {
         switch self {
         case .pageHeader, .pageFooter:
-            return nil
-        case .verseSeparator(_, let color),
-             .suraName(_, let color),
-             .arabicText(_, let color),
-             .verseNumber(_, let color),
-             .translationTextChunk(_, let color),
-             .translationReferenceVerse(_, let color),
-             .translatorText(_, let color):
-            return color
+            return TranslationVerseDecoration()
+        case .verseSeparator(_, let decoration),
+             .suraName(_, let decoration),
+             .arabicText(_, let decoration),
+             .verseNumber(_, let decoration),
+             .translationTextChunk(_, let decoration),
+             .translationFootnoteChunk(_, let decoration),
+             .translationReferenceVerse(_, let decoration),
+             .translatorText(_, let decoration):
+            return decoration
         }
     }
 }

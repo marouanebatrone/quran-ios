@@ -40,8 +40,9 @@
 "quran.page.name" = "Pagina %@";
 // A page location: %1$@ is the name of the page's first surah and %2$@ is the localized page, such as "At-Tawbah, Page 200". Translators may reorder the placeholders.
 "quran.page.location" = "%1$@, %2$@";
-// A range of Quran references: %1$@ is the start and %2$@ is the end, such as "Al-Baqarah, Ayah 255 - Al-Baqarah, Ayah 257". Translators may reorder the placeholders.
-"quran.range" = "%1$@ - %2$@";
+// Ayahs across surahs: %1$@ is the start and %2$@ is the end reference, such as "Al-Baqarah 2:286 – Āli-ʿImrān 3:10". Ayahs in one surah are written "Al-Baqarah 2:1–10" without this format. Translators may reorder the placeholders.
+// Metadata: Translated by AI; human review required.
+"quran.range" = "%1$@ – %2$@";
 // A hizb reference: %@ is the localized hizb number, such as "Hizb 3".
 "quran.hizb.name" = "Hizb %@";
 // A quarter reference: %1$@ is the fraction (¼, ½ or ¾) and %2$@ is the hizb reference, such as "¼ Hizb 3". Translators may reorder the placeholders.
@@ -85,6 +86,9 @@
 // Metadata: Translated by ChatGPT; human review required.
 "setting.donate" = "Doneren";
 "setting.share_app" = "Deel de app...";
+// Settings row that opens the Quran.com privacy policy.
+// Metadata: Translated by AI; human review required.
+"setting.privacy_policy" = "Privacybeleid";
 "setting.app_version" = "App Versie";
 
 // MARK: - Quran Menu
@@ -107,6 +111,9 @@
 "menu.ayahIndicators.readingBookmark" = "Leesbladwijzer";
 "menu.ayahIndicators.none" = "Geen";
 "menu.arabicText" = "Arabische tekst";
+"menu.footnotes" = "Voetnoottekst";
+"menu.rotate_to_portrait" = "Draaien naar staand";
+"menu.rotate_to_landscape" = "Draaien naar liggend";
 // Metadata: Translated by ChatGPT; human review required.
 "menu.theme_settings" = "Thema's en instellingen";
 
@@ -190,8 +197,12 @@
 // MARK: - Audio
 
 "audio.playing.action.modify" = "Wijzigen";
-"audio.playing.message" = "Audio afspelen van %@ tot %@";
-"audio.downloading.message" = "Audio downloaden van %@ tot %@";
+// Toast when audio starts playing: %@ is the ayah range, such as "Al-Baqarah 2:1–10", or a surah name when the whole surah plays.
+// Metadata: Translated by AI; human review required.
+"audio.playing.toast" = "%@ wordt afgespeeld";
+// Toast when audio starts downloading before it plays: %@ is the ayah range, such as "Al-Baqarah 2:1–10", or a surah name for a whole surah.
+// Metadata: Translated by AI; human review required.
+"audio.downloading.toast" = "Audio voor %@ wordt gedownload";
 
 "audio.playing-verses.label" = "Verzen Afgespeeld";
 "audio.adjust-end-verse-to-the-end.label" = "Pas het eindvers aan het einde van de";
@@ -206,8 +217,6 @@
 
 // MARK: - Notes
 
-"notes.sync.title" = "Je notities synchroniseren";
-"notes.sync.body" = "Log in bij Quran.com om je notities op al je apparaten beschikbaar te houden.";
 "notes.sync.no-data.title" = "Nog geen notities";
 "notes.sync.no-data.text" = "Houd tijdens het lezen een ayah ingedrukt en tik daarna op ‘Voeg Notitie Toe’ om je eerste notitie te schrijven.";
 
@@ -224,6 +233,18 @@
 "notes.search.no-results.title" = "Geen notities komen overeen met \"%@\"";
 // Metadata: Translated by ChatGPT; human review required.
 "notes.search.no-results.text" = "Probeer een ander woord uit een opgeslagen notitie of een soeranaam.";
+// Title of the Notes card telling upgraders that their highlights moved to the Bookmarks tab.
+// Metadata: Translated by AI; human review required.
+"notes.highlights-tip.title" = "Markeringen staan nu bij Bladwijzers";
+// Body of the Notes card about highlights moving to the Bookmarks tab.
+// Metadata: Translated by AI; human review required.
+"notes.highlights-tip.text" = "Notities bewaart alleen wat je schrijft. Je gemarkeerde ayahs staan per kleur op het tabblad Bladwijzers.";
+// Opens the Bookmarks tab from the Notes card and empty state.
+// Metadata: Translated by AI; human review required.
+"notes.highlights.show" = "Markeringen tonen";
+// Notes empty state line when the user has highlights.
+// Metadata: Translated by AI; human review required.
+"notes.no-data.highlights.text" = "Je markeringen staan op het tabblad Bladwijzers.";
 
 // MARK: - Ayah Menu
 
@@ -388,6 +409,14 @@
 // Metadata: Translated by ChatGPT; human review required.
 "audio.streaming.title" = "Audio streamen";
 // Metadata: Translated by AI; human review required.
+"audio.dim-other-ayahs.title" = "Andere ayahs dimmen";
+// Footer under the Dim Other Ayahs toggle in Audio Options: what it does, then that it applies without tapping Play.
+// Metadata: Translated by AI; human review required.
+"audio.dim-other-ayahs.footer" = "Dimt tijdens het afspelen alle ayahs behalve de ayah die wordt gereciteerd. Wordt meteen toegepast.";
+// Footer under the Dim Other Ayahs toggle in Settings › Audio Playback.
+// Metadata: Translated by AI; human review required.
+"audio.dim-other-ayahs.description" = "Dimt tijdens het afspelen alle ayahs behalve de ayah die wordt gereciteerd.";
+// Metadata: Translated by AI; human review required.
 "audio.playback.title" = "Audioweergave";
 // Metadata: Translated by AI; human review required.
 "audio.playback.footer.page" = "Het afspelen gaat door tot het einde van de huidige pagina. Zonder streamen worden die verzen eerst gedownload; streamen bespaart ruimte, maar vereist een internetverbinding.";
@@ -413,12 +442,19 @@
 // Ayah menu
 // Metadata: Translated by ChatGPT; human review required.
 "ayah.menu.notes-count" = "Notities (%d)";
+// Metadata: Translated by AI; human review required.
+"ayah.menu.reading-bookmark.moved-to" = "Leesbladwijzer verplaatst naar %@";
+// Badge on the ayah menu's Reading Bookmark row.
+// Metadata: Translated by AI; human review required.
+"ayah.menu.reading-bookmark.new" = "Nieuw";
 // Metadata: Translated by ChatGPT; human review required.
-"ayah.menu.reading-bookmark.moved" = "Leesbladwijzer verplaatst van %@ naar %@";
+"ayah.menu.reading-bookmark.moved.explanation" = "Je verplaatst leesbladwijzers in plaats van nieuwe toe te voegen. Bewaar ayahs in een verzameling om ze te houden.";
 // Metadata: Translated by ChatGPT; human review required.
 "ayah.menu.reading-bookmark.removed" = "Leesbladwijzer verwijderd van %@";
 // Metadata: Translated by ChatGPT; human review required.
 "ayah.menu.reading-bookmark.saved" = "Leesbladwijzer opgeslagen bij %@";
+// Metadata: Translated by ChatGPT; human review required.
+"ayah.menu.reading-bookmark.saved.explanation" = "Verplaats hem terwijl je leest. Je hebt er drie, een voor elke leesronde.";
 // Metadata: Translated by ChatGPT; human review required.
 "ayah.menu.reading-bookmark.single-ayah-only" = "Selecteer één ayah";
 // Metadata: Translated by ChatGPT; human review required.
@@ -431,6 +467,12 @@
 "bookmarks.collections" = "Verzamelingen";
 // Metadata: Translated by ChatGPT; human review required.
 "bookmarks.collections.add" = "Verzameling toevoegen";
+// Delete All confirmation on a highlight color's page. %@ is the color's name as shown on the page, such as Green.
+// Metadata: Translated by AI; human review required.
+"bookmarks.collections.ayahs.delete-all.colored.confirmation" = "Weet je zeker dat je alle markeringen met de kleur ‘%@’ wilt verwijderen?";
+// Delete All confirmation on a collection's page. %@ is the collection's name.
+// Metadata: Translated by AI; human review required.
+"bookmarks.collections.ayahs.delete-all.confirmation" = "Weet je zeker dat je alle ayahs uit ‘%@’ wilt verwijderen?";
 // Metadata: Translated by ChatGPT; human review required.
 "bookmarks.collections.ayahs.delete-hint" = "Veeg over een bladwijzer om deze te verwijderen.";
 // Metadata: Translated by ChatGPT; human review required.
@@ -482,14 +524,23 @@
 "bookmarks.editor.collection.unselected" = "Niet geselecteerd";
 // Metadata: Translated by ChatGPT; human review required.
 "bookmarks.editor.error.highlight-unavailable" = "De markeringskleuren worden nog geladen. Probeer het opnieuw.";
+// One-time intro at the top of the Save Ayah sheet that explains collections.
+// Metadata: Translated by AI; human review required.
+"bookmarks.editor.intro" = "Bewaar ayahs in Favorieten of in je eigen verzamelingen, zoals Dua's of Hifz-herhaling. De markeringskleuren staan hier ook.";
 // Metadata: Translated by ChatGPT; human review required.
 "bookmarks.old-page-bookmarks" = "Oude paginabladwijzers";
-// Metadata: Translated by ChatGPT; human review required.
-"bookmarks.sync.action" = "Inloggen";
-// Metadata: Translated by ChatGPT; human review required.
-"bookmarks.sync.body" = "Log in bij Quran.com om je collecties op al je apparaten beschikbaar te houden.";
-// Metadata: Translated by ChatGPT; human review required.
-"bookmarks.sync.title" = "Je collecties synchroniseren";
+// Header of the Old Page Bookmarks collection.
+// Metadata: Translated by AI; human review required.
+"bookmarks.old-page-bookmarks.explanation" = "Overgenomen uit je paginabladwijzers. Elke pagina is nu de eerste ayah ervan.";
+// Title of the Bookmarks card telling upgraders where their 3.0 page bookmarks went.
+// Metadata: Translated by AI; human review required.
+"bookmarks.old-page-bookmarks-tip.title" = "Je paginabladwijzers staan hier";
+// Body of the Bookmarks card about 3.0 page bookmarks. %@ is the app version, such as 3.0.
+// Metadata: Translated by AI; human review required.
+"bookmarks.old-page-bookmarks-tip.text" = "Elke pagina waarvoor je in versie %@ een bladwijzer had, is nu de eerste ayah van die pagina, in Oude paginabladwijzers. Gebruik leesbladwijzers om tijdens het lezen je plek te bewaren.";
+// Button on the Bookmarks card that opens the Old Page Bookmarks collection.
+// Metadata: Translated by AI; human review required.
+"bookmarks.old-page-bookmarks.open" = "Oude paginabladwijzers openen";
 
 // Highlight colors
 // Metadata: Translated by ChatGPT; human review required.
@@ -576,6 +627,8 @@
 "translation.text.footnote-number" = "[%d]";
 // Metadata: Translated by ChatGPT; human review required.
 "translation.text.footnote-title" = "Voetnoot nr. %d";
+"translation.text.verse-reference.toast" = "%@ wordt getoond";
+"translation.text.verse-reference.back" = "Terug";
 
 /* Audio banner options summary */
 "audio.summary.verse" = "vers %@";
@@ -596,6 +649,12 @@
 // Reading bookmarks menu explanation below its title.
 // Metadata: Translated by AI; human review required.
 "bookmarks.reading.description" = "Gebruik er een voor elke lezing, zoals je khatmah of memorisatie.";
+// Reading bookmarks menu heading above the explanation, shown while no reading bookmark is placed.
+// Metadata: Translated by AI; human review required.
+"bookmarks.reading.first-run.title" = "Bewaar je plek in maximaal drie lezingen";
+// Subtitle of the suggested reading bookmark row, shown while no reading bookmark is placed.
+// Metadata: Translated by AI; human review required.
+"bookmarks.reading.first-run.suggested" = "Aanbevolen voor je eerste lezing";
 // Reading bookmark row subtitle when the bookmark is at the current ayah or page.
 // Metadata: Translated by AI; human review required.
 "bookmarks.reading.saved-here" = "Hier opgeslagen";
@@ -783,3 +842,44 @@
 "sync.sign-out.review" = "Bekijken";
 // Button on an item that doesn't sync: opens its note editor or renames its collection.
 "sync.held.edit" = "Bewerken";
+
+// MARK: - Ayah ranges
+
+// How VoiceOver reads ayahs across surahs: %1$@ is the start and %2$@ is the end ayah, such as "Al-Baqarah, Ayah 286 to Āli-ʿImrān, Ayah 10". Translators may reorder the placeholders.
+// Metadata: Translated by AI; human review required.
+"quran.range.spoken" = "van %1$@ tot %2$@";
+// How VoiceOver reads ayahs in one surah: %1$@ is the first and %2$@ is the last localized ayah number, such as "Ayahs 1 to 10" in "Al-Baqarah, Ayahs 1 to 10". Translators may reorder the placeholders.
+// Metadata: Translated by AI; human review required.
+"quran.ayah.number-range" = "Ayahs %1$@ tot %2$@";
+// Sign-in reminder toast title after a signed-out user saves a new note.
+"sync.nudge.note-saved" = "Notitie opgeslagen";
+// Sign-in reminder toast title after a signed-out user creates a collection.
+"sync.nudge.collection-created" = "Verzameling gemaakt";
+// Sign-in reminder toast subtitle under "Note saved" or "Collection created": "it" is the note or collection.
+"sync.nudge.subtitle" = "Log in om deze op Quran.com en al je apparaten te zien.";
+// Sign-in reminder toast button that starts signing in to Quran.com.
+"sync.nudge.sign-in" = "Inloggen";
+// What's New sync reveal chip, before an arrow and "Quran.com": sync is moving from iCloud to Quran.com. Keep "iCloud" in English.
+"new.sync_reveal.chip.from_icloud" = "Van iCloud";
+// How VoiceOver reads the What's New sync reveal chip. Keep "iCloud" and "Quran.com" in English.
+"new.sync_reveal.chip.accessibility" = "Van iCloud naar Quran.com";
+// What's New sync reveal title: the user's Quran reading is now connected across their devices and Quran.com.
+"new.sync_reveal.title" = "Je Koran, overal verbonden";
+// What's New sync reveal benefit title, after a sync icon: the user's reading place follows them on every device.
+"new.sync_reveal.every_device.title" = "Je plek op elk apparaat";
+// What's New sync reveal benefit detail under "Your place on every device". Keep "iCloud", "Quran.com" and "Quran ID" in English.
+"new.sync_reveal.every_device.subtitle" = "Bladwijzers, notities en leesvoortgang verhuizen van iCloud naar Quran.com, met je gratis Quran ID.";
+// What's New sync reveal benefit title, after a book icon: study more on Quran.com without losing the reading place.
+"new.sync_reveal.go_deeper.title" = "Verdiep je zonder je plek kwijt te raken";
+// What's New sync reveal benefit detail under "Go deeper without losing your place": Quran.com opens tafsir, reflections and lessons at the ayah the user stopped on. Keep "Quran.com" in English.
+"new.sync_reveal.go_deeper.subtitle" = "Tafsir, reflecties en lessen op Quran.com, bij de ayah waar je gebleven was.";
+// What's New sync reveal button that starts signing in to Quran.com with a Quran ID account. Keep "Quran ID" in English.
+"new.sync_reveal.sign_in" = "Doorgaan met Quran ID";
+// What's New sync reveal button that closes it without signing in.
+"new.sync_reveal.not_now" = "Niet nu";
+// What's New sync reveal footnote on iPhone.
+"new.sync_reveal.footnote.iphone" = "Zonder in te loggen blijven je bladwijzers op deze iPhone.";
+// What's New sync reveal footnote on iPad.
+"new.sync_reveal.footnote.ipad" = "Zonder in te loggen blijven je bladwijzers op deze iPad.";
+// What's New sync reveal footnote on Mac.
+"new.sync_reveal.footnote.mac" = "Zonder in te loggen blijven je bladwijzers op deze Mac.";

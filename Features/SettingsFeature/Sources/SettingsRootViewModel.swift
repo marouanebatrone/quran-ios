@@ -19,6 +19,7 @@ import NoorUI
 import ReadingSelectorFeature
 import SafariServices
 import SettingsService
+import SystemDependencies
 import TranslationsFeature
 import UIKit
 import VLogging
@@ -109,7 +110,7 @@ final class SettingsRootViewModel: ObservableObject {
     /// Whether the app can change its Home Screen icon. The App Icon row hides otherwise.
     let isAppIconAvailable: Bool
 
-    let contactUsService = ContactUsService()
+    let contactUsService = ContactUsService(bundle: DefaultSystemBundle())
     let themeService = ThemeService.shared
 
     weak var navigationController: UINavigationController?
@@ -134,7 +135,6 @@ final class SettingsRootViewModel: ObservableObject {
             return
         }
         logger.info("Settings: appearance mode changed to \(mode)")
-        analytics.changeAppearanceMode(mode)
         appearanceMode = mode
     }
 
@@ -178,9 +178,7 @@ final class SettingsRootViewModel: ObservableObject {
 
     func donate() {
         logger.info("Settings: Open donation page.")
-        let url = URL(validURL: "https://give.quran.foundation/ios")
-        let viewController = SFSafariViewController(url: url)
-        navigationController?.present(viewController, animated: true)
+        presentWebPage(URL(validURL: "https://give.quran.foundation/ios"))
     }
 
     func writeReview() {
@@ -192,6 +190,11 @@ final class SettingsRootViewModel: ObservableObject {
         logger.info("Settings: presentContactUs")
         let viewController = contactUsService.contactUsController()
         navigationController?.present(viewController, animated: true)
+    }
+
+    func openPrivacyPolicy() {
+        logger.info("Settings: Open privacy policy.")
+        presentWebPage(URL(validURL: "https://quran.com/privacy"))
     }
 
     #if QURAN_SYNC
@@ -260,21 +263,20 @@ final class SettingsRootViewModel: ObservableObject {
             return
         }
 
-        analytics.quranSyncSignIn(from: .settings)
-        logger.info("Quran Sync: starting sign in from Settings")
         do {
-            try await authenticationClient.login(on: viewController)
-            let state = await authenticationClient.authenticationState
-            logger.info("Quran Sync: sign in completed from Settings. State: \(state)")
+            guard let state = try await QuranSyncSignIn.signIn(
+                on: viewController,
+                authenticationClient: authenticationClient,
+                analytics: analytics,
+                source: .settings
+            ) else {
+                return
+            }
             // While observing, the updates show the card signed in together with the user.
             if runningAuthenticationObservations == 0 {
                 accountState = state == .authenticated ? .signedIn(loggedInUser) : .signedOut
             }
-        } catch AuthenticationClientError.cancelled {
-            logger.info("Quran Sync: sign in cancelled from Settings")
-            return
         } catch {
-            logger.error("Failed to login to Quran.com: \(error)")
             self.error = error
         }
     }
@@ -348,6 +350,11 @@ final class SettingsRootViewModel: ObservableObject {
         }
     }
     #endif
+
+    private func presentWebPage(_ url: URL) {
+        let viewController = SFSafariViewController(url: url)
+        navigationController?.present(viewController, animated: true)
+    }
 }
 
 #if QURAN_SYNC
@@ -360,9 +367,3 @@ enum QuranComAccountState: Equatable {
     case signedIn(MobileSyncUser?)
 }
 #endif
-
-private extension AnalyticsLibrary {
-    func changeAppearanceMode(_ mode: AppearanceMode) {
-        logEvent("ChangeAppearanceMode", value: mode.description)
-    }
-}

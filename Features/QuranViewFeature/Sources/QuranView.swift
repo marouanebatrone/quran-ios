@@ -25,6 +25,8 @@ import ViewConstrainer
 @MainActor
 protocol QuranViewDelegate: AnyObject {
     func onQuranViewTapped(_ quranView: QuranView)
+    func canTogglePlayPause(in quranView: QuranView) -> Bool
+    func onQuranViewPlayPauseKeyPressed(_ quranView: QuranView)
 }
 
 class QuranView: UIView, UIGestureRecognizerDelegate, UINavigationBarDelegate {
@@ -49,13 +51,13 @@ class QuranView: UIView, UIGestureRecognizerDelegate, UINavigationBarDelegate {
     let navigationBar = UINavigationBar()
     let navigationItem = UINavigationItem()
 
-    /// How far the audio bar reaches above the window's bottom edge, or 0 while it's hidden.
-    var bottomBarsHeight: CGFloat {
-        guard let audioView, !audioBarHidden, let window else {
-            return 0
+    /// Presented editors aren't in this responder chain, so they keep space for typing.
+    override var keyCommands: [UIKeyCommand]? {
+        let commands = super.keyCommands ?? []
+        guard canTogglePlayPause else {
+            return commands.isEmpty ? nil : commands
         }
-        let audioBarTop = audioView.convert(audioView.bounds, to: window).minY
-        return max(0, window.bounds.height - audioBarTop)
+        return commands + [playPauseCommand]
     }
 
     override func layoutSubviews() {
@@ -85,6 +87,8 @@ class QuranView: UIView, UIGestureRecognizerDelegate, UINavigationBarDelegate {
 
     func addAudioBannerView(_ audioBannerView: UIView) {
         audioView = audioBannerView
+        // Toasts, the banner's own included, stay above the audio bar while it shows.
+        audioBannerView.keepsToastsAbove = true
         addAutoLayoutSubview(audioBannerView)
         audioBannerView.vc
             .horizontalEdges()
@@ -172,6 +176,28 @@ class QuranView: UIView, UIGestureRecognizerDelegate, UINavigationBarDelegate {
     private var barsVisibilityAnimationID = 0
     private var navigationBarScrollEdgeInteraction: (any UIInteraction)?
     private var audioBarScrollEdgeInteraction: (any UIInteraction)?
+
+    private lazy var playPauseCommand: UIKeyCommand = {
+        let command = UIKeyCommand(input: " ", modifierFlags: [], action: #selector(toggleRecitation))
+        // Otherwise space activates the focused verse.
+        command.wantsPriorityOverSystemBehavior = true
+        return command
+    }()
+
+    private var canTogglePlayPause: Bool {
+        guard let delegate, delegate.canTogglePlayPause(in: self) else {
+            return false
+        }
+        return !(findFirstResponder() is UITextInput)
+    }
+
+    @objc
+    private func toggleRecitation() {
+        guard canTogglePlayPause else {
+            return
+        }
+        delegate?.onQuranViewPlayPauseKeyPressed(self)
+    }
 
     private func configureNavigationBarScrollEdgeEffectIfNeeded() {
         guard #available(iOS 26.0, *) else { return }

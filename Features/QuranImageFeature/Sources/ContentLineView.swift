@@ -32,11 +32,11 @@ struct ContentLineView: View {
             onReaderScroll: { viewModel.onReaderScroll() },
             wordFrames: viewModel.wordFrames,
             highlightColorsByVerse: viewModel.highlightColorsByVerse,
+            undimmedVerses: viewModel.undimmedVerses,
             ayahReadingBookmarks: viewModel.ayahReadingBookmarks,
             pageReadingBookmarks: viewModel.pageReadingBookmarks,
             drawsAyahNumbersAndSuraHeaders: viewModel.drawsAyahNumbersAndSuraHeaders,
             chromeStyle: viewModel.chromeStyle,
-            imageRenderingMode: viewModel.imageRenderingMode,
             imageForLine: viewModel.lineImage(for:),
             imageForSideline: viewModel.sidelineImage(for:),
             onAyahReadingBookmarkTap: onAyahReadingBookmarkTap,
@@ -51,9 +51,9 @@ struct ContentLineView: View {
             onReaderScroll: { viewModel.onReaderScroll() },
             wordFrames: viewModel.wordFrames,
             highlightColorsByVerse: viewModel.highlightColorsByVerse,
+            undimmedVerses: viewModel.undimmedVerses,
             drawsAyahNumbersAndSuraHeaders: viewModel.drawsAyahNumbersAndSuraHeaders,
             chromeStyle: viewModel.chromeStyle,
-            imageRenderingMode: viewModel.imageRenderingMode,
             imageForLine: viewModel.lineImage(for:),
             imageForSideline: viewModel.sidelineImage(for:),
             onGlobalFrameChange: viewModel.updateContentFrame
@@ -84,13 +84,13 @@ private struct ContentLineViewBody: View {
     let onReaderScroll: () -> Void
     let wordFrames: WordFrameCollection
     let highlightColorsByVerse: [AyahNumber: Color]
+    let undimmedVerses: Set<AyahNumber>?
     #if QURAN_SYNC
     let ayahReadingBookmarks: [AyahNumber: [ReadingBookmarkSlot]]
     let pageReadingBookmarks: [ReadingBookmarkSlot]
     #endif
     let drawsAyahNumbersAndSuraHeaders: Bool
-    let chromeStyle: LinePageChromeStyle
-    let imageRenderingMode: QuranThemedImage.RenderingMode
+    let chromeStyle: QuranPageChromeStyle
     let imageForLine: (Int) -> UIImage?
     let imageForSideline: (String) -> UIImage?
     #if QURAN_SYNC
@@ -121,13 +121,13 @@ private struct ContentLineViewBody: View {
 
     // MARK: Private
 
-    @Environment(\.themeColorScheme) private var themeColorScheme
+    @Environment(\.quranPageColorScheme) private var quranPageColorScheme
     #if QURAN_SYNC
     @State private var pressedReadingBookmarkAyah: AyahNumber?
     #endif
 
-    private var chromePalette: LinePageChromePalette {
-        chromeStyle.palette(for: themeColorScheme)
+    private var chromePalette: QuranPageChromePalette {
+        chromeStyle.palette(for: quranPageColorScheme)
     }
 
     private func lineCanvas(_ layout: LinePageLayout?) -> some View {
@@ -157,6 +157,7 @@ private struct ContentLineViewBody: View {
                 suraHeaders(layout)
                 highlights(layout)
                 ayahMarkers(layout)
+                ayahDim(layout)
             }
         }
         .frame(
@@ -193,7 +194,7 @@ private struct ContentLineViewBody: View {
     private func sidelines(_ layout: LinePageLayout) -> some View {
         ForEach(layout.sidelinePlacements, id: \.sideline.id) { placement in
             if let image = imageForSideline(placement.sideline.id) {
-                QuranThemedImage(image: image, renderingMode: imageRenderingMode)
+                QuranThemedImage(image: image)
                     .placed(in: placement.frame)
             }
         }
@@ -203,9 +204,21 @@ private struct ContentLineViewBody: View {
     private func suraHeaders(_ layout: LinePageLayout) -> some View {
         if drawsAyahNumbersAndSuraHeaders {
             ForEach(layout.suraHeaderPlacements, id: \.header.sura) { placement in
-                SuraHeaderView(tint: chromePalette.header.foreground)
+                SuraHeaderView(tint: chromePalette.header)
                     .placed(in: placement.frame)
             }
+        }
+    }
+
+    /// Line pages have no word pointer, so every undimmed verse is highlighted and has highlight rects.
+    @ViewBuilder
+    private func ayahDim(_ layout: LinePageLayout) -> some View {
+        if let undimmedVerses {
+            QuranAyahDim(
+                cutouts: layout.highlightRects
+                    .filter { undimmedVerses.contains($0.ayah) }
+                    .map(\.rect)
+            )
         }
     }
 
@@ -226,13 +239,8 @@ private struct ContentLineViewBody: View {
     private func ayahMarkers(_ layout: LinePageLayout) -> some View {
         if drawsAyahNumbersAndSuraHeaders {
             ForEach(layout.ayahMarkerPlacements, id: \.marker.ayah) { placement in
-                AyahNumberView(
-                    number: placement.marker.ayah.ayah,
-                    ringColor: chromePalette.marker.ringForeground,
-                    fillColor: chromePalette.marker.content?.background,
-                    textColor: chromePalette.marker.content?.foreground
-                )
-                .placed(in: placement.frame)
+                AyahNumberView(number: placement.marker.ayah.ayah, palette: chromePalette)
+                    .placed(in: placement.frame)
             }
         }
     }
@@ -246,7 +254,7 @@ private struct ContentLineViewBody: View {
 
                 Group {
                     if let image = imageForLine(lineFrame.lineNumber) {
-                        QuranThemedImage(image: image, renderingMode: imageRenderingMode)
+                        QuranThemedImage(image: image)
                     } else {
                         Color.clear
                     }

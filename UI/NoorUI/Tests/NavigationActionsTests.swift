@@ -1,3 +1,4 @@
+import Localization
 import UIKit
 import XCTest
 @testable import NoorUI
@@ -36,6 +37,14 @@ final class NavigationActionsTests: XCTestCase {
         XCTAssertNotNil(button.primaryAction)
     }
 
+    func test_deleteAllButton_isRedAndTitled() {
+        let button = NavigationBarButton.deleteAll { _ in }
+
+        XCTAssertEqual(button.title, l("bookmarks.delete-all"))
+        XCTAssertEqual(button.tintColor, .systemRed)
+        XCTAssertNotNil(button.primaryAction)
+    }
+
     func test_overflowButton_dropsTheCircleOnLiquidGlass() {
         let expectedSymbol = if #available(iOS 26, *) {
             "ellipsis"
@@ -51,7 +60,7 @@ final class NavigationActionsTests: XCTestCase {
         try XCTSkipUnless(ProcessInfo.processInfo.isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 26, minorVersion: 0, patchVersion: 0)))
 
         let button = NavigationBarButton.secondary(
-            systemName: "books.vertical",
+            image: .mushafs,
             accessibilityLabel: "Books",
             glassSymbolScale: .medium
         ) { }
@@ -63,13 +72,13 @@ final class NavigationActionsTests: XCTestCase {
     }
 
     func test_secondaryButton_keepsTheDefaultScaleWithoutGlassSymbolScale() {
-        let button = NavigationBarButton.secondary(systemName: "books.vertical", accessibilityLabel: "Books") { }
+        let button = NavigationBarButton.secondary(image: .mushafs, accessibilityLabel: "Books") { }
 
         XCTAssertEqual(button.image, UIImage(systemName: "books.vertical"))
     }
 
     func test_secondaryButton_usesAccessibilityLabel() {
-        let button = NavigationBarButton.secondary(systemName: "books.vertical", accessibilityLabel: "Books") { }
+        let button = NavigationBarButton.secondary(image: .mushafs, accessibilityLabel: "Books") { }
 
         XCTAssertEqual(button.accessibilityLabel, "Books")
     }

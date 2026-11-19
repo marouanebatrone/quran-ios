@@ -28,18 +28,32 @@ public enum NavigationBarButton {
     }
 
     public static func add(action: @escaping @MainActor @Sendable () -> Void) -> UIBarButtonItem {
-        button(image: UIImage(systemName: "plus"), tintColor: nil, action: action)
+        button(image: NoorSystemImage.plus.uiImage, tintColor: nil, action: action)
+    }
+
+    /// The destructive Delete All shown while editing a list. Its action gets the button, so a confirmation
+    /// can anchor its popover to it.
+    public static func deleteAll(action: @escaping @MainActor (UIBarButtonItem) -> Void) -> UIBarButtonItem {
+        let button = UIBarButtonItem()
+        button.primaryAction = UIAction(title: l("bookmarks.delete-all")) { [weak button] _ in
+            guard let button else {
+                return
+            }
+            action(button)
+        }
+        button.tintColor = .systemRed
+        return button
     }
 
     /// Pass `glassSymbolScale` for symbols that are both wide and tall, such as `books.vertical`:
     /// Liquid Glass draws each bar button inside a 44pt circle, which they crowd at the default scale.
     public static func secondary(
-        systemName: String,
+        image: NoorSystemImage,
         accessibilityLabel: String,
         glassSymbolScale: UIImage.SymbolScale? = nil,
         action: @escaping @MainActor @Sendable () -> Void
     ) -> UIBarButtonItem {
-        let item = button(image: symbol(systemName, glassSymbolScale: glassSymbolScale), tintColor: .label, action: action)
+        let item = button(image: symbol(image, glassSymbolScale: glassSymbolScale), tintColor: .label, action: action)
         item.accessibilityLabel = accessibilityLabel
         return item
     }
@@ -60,16 +74,16 @@ public enum NavigationBarButton {
     /// Liquid Glass already wraps each bar button in a circle, so a circled ellipsis would draw two.
     public static var overflowImage: UIImage? {
         if #available(iOS 26, *) {
-            UIImage(systemName: "ellipsis")
+            NoorSystemImage.more.uiImage
         } else {
-            UIImage(systemName: "ellipsis.circle")
+            NoorSystemImage.moreCircle.uiImage
         }
     }
 
     // MARK: Private
 
-    private static func symbol(_ systemName: String, glassSymbolScale: UIImage.SymbolScale?) -> UIImage? {
-        let image = UIImage(systemName: systemName)
+    private static func symbol(_ systemImage: NoorSystemImage, glassSymbolScale: UIImage.SymbolScale?) -> UIImage? {
+        let image = systemImage.uiImage
         guard #available(iOS 26, *), let glassSymbolScale else {
             return image
         }
@@ -109,16 +123,19 @@ public enum NavigationBarButton {
 
 @MainActor
 public final class NavigationEditModeController {
+    /// `listItems` show only alongside the Edit button, while there is a list to edit.
     public init(
         navigationItem: UINavigationItem,
         reload: AnyPublisher<Void, Never>,
         editMode: Binding<EditMode?>,
+        listItems: [UIBarButtonItem] = [],
         customItems: [UIBarButtonItem] = []
     ) {
         controller = EditController(
             navigationItem: navigationItem,
             reload: reload,
             editMode: editMode,
+            listItems: listItems,
             customItems: customItems,
             buttonProvider: { editMode, action in
                 if editMode.isEditing {
@@ -155,7 +172,7 @@ public struct CloseToolbarItem: ToolbarContent {
     public var body: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
             Button(action: action) {
-                Image(systemName: "xmark")
+                NoorSystemImage.cancel.image
             }
             .foregroundStyle(Color.label)
             .accessibilityLabel(l("button.close"))

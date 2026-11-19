@@ -112,120 +112,123 @@ private struct AyahMenuViewList: View {
         }
     }
 
-    var translation: some View {
-        MenuGroup {
-            Divider()
-            Row(title: l("menu.translation"), action: dataObject.actions.showTranslation) {
-                Image(systemName: "globe")
-            }
-            Divider()
-        }
-    }
-
     var body: some View {
-        VStack(alignment: .leading) {
-            MenuGroup {
-                Row(
-                    title: lAndroid("play"),
-                    subtitle: .text(dataObject.playSubtitle),
-                    action: dataObject.actions.play
-                ) {
-                    NoorSystemImage.play.image
+        VStack(alignment: .leading, spacing: 0) {
+            let groups = visibleGroups
+            ForEach(groups, id: \.self) { group in
+                if group != groups.first {
+                    NoorMenuGroupSeparator()
                 }
-                Divider()
-                Row(
-                    title: l("ayah.menu.repeat"),
-                    subtitle: .text(dataObject.repeatSubtitle),
-                    action: dataObject.actions.repeatVerses
-                ) {
-                    Image(systemName: "repeat")
-                }
-                Divider()
-            }
-
-            MenuGroup {
-                Divider()
-
-                #if QURAN_SYNC
-                readingBookmarkRow(dataObject.readingBookmarkState)
-                Divider()
-                    .padding(.leading)
-                #endif
-
-                #if QURAN_SYNC
-                Row(title: dataObject.bookmarkTitle, action: dataObject.actions.bookmark) {
-                    bookmarkIcon
-                }
-                #else
-                if dataObject.state == .noHighlight {
-                    Row(
-                        title: l("ayah.menu.highlight"),
-                        action: {
-                            await dataObject.actions.highlight(dataObject.highlightingColor)
-                        }
-                    ) {
-                        IconCircle(color: dataObject.highlightingColor)
-                    }
-                    Divider()
-                        .padding(.leading)
-                }
-                Row(
-                    title: l("ayah.menu.highlight"),
-                    subtitle: .text(l("ayah.menu.highlight-select-color")),
-                    action: showHighlights
-                ) {
-                    HighlightPaletteIcon()
-                }
-                #endif
-                Divider()
-                    .padding(.leading)
-
-                switch dataObject.state {
-                case .noHighlight, .highlighted:
-                    addNote
-                case .noted:
-                    editNote
-                }
-
-                #if !QURAN_SYNC
-                if dataObject.state != .noHighlight {
-                    Divider()
-                        .padding(.leading)
-
-                    Row(
-                        title: noteDeleteText,
-                        isDestructive: true,
-                        action: dataObject.actions.deleteNote
-                    ) {
-                        Image(systemName: "xmark")
-                    }
-                }
-                #endif
-
-                Divider()
-            }
-
-            if !dataObject.isTranslationView {
-                translation
-            }
-
-            MenuGroup {
-                Divider()
-
-                Row(title: l("ayah.menu.copy"), action: dataObject.actions.copy) {
-                    Image(systemName: "doc.on.doc")
-                }
-                Divider()
-                    .padding(.leading)
-                Row(title: l("ayah.menu.share"), action: dataObject.actions.share) {
-                    Image(systemName: "square.and.arrow.up")
-                }
+                content(of: group)
             }
         }
-        .fixedSize(horizontal: true, vertical: false)
+        .idealWidthUpToOffered()
     }
 
     // MARK: Private
+
+    /// Each group is one section of the menu, like the sections of a native menu. The rows sit on the popover
+    /// background, with one separator between consecutive visible groups and none inside a group.
+    private enum MenuGroup: CaseIterable {
+        case playback
+        case annotations
+        case translation
+        case sharing
+    }
+
+    private var visibleGroups: [MenuGroup] {
+        MenuGroup.allCases.filter { isVisible($0) }
+    }
+
+    private func isVisible(_ group: MenuGroup) -> Bool {
+        switch group {
+        case .playback, .annotations, .sharing: true
+        case .translation: !dataObject.isTranslationView
+        }
+    }
+
+    @ViewBuilder
+    private func content(of group: MenuGroup) -> some View {
+        switch group {
+        case .playback:
+            Row(
+                title: lAndroid("play"),
+                subtitle: .text(dataObject.playSubtitle),
+                action: dataObject.actions.play
+            ) {
+                NoorSystemImage.play.image
+            }
+            Row(
+                title: l("ayah.menu.repeat"),
+                subtitle: .text(dataObject.repeatSubtitle),
+                action: dataObject.actions.repeatVerses
+            ) {
+                NoorSystemImage.repeatRange.image
+            }
+
+        case .annotations:
+            annotations
+
+        case .translation:
+            Row(title: l("menu.translation"), action: dataObject.actions.showTranslation) {
+                NoorSystemImage.translation.image
+            }
+
+        case .sharing:
+            Row(title: l("ayah.menu.copy"), action: dataObject.actions.copy) {
+                NoorSystemImage.copy.image
+            }
+            Row(title: l("ayah.menu.share"), action: dataObject.actions.share) {
+                NoorSystemImage.share.image
+            }
+        }
+    }
+
+    @ViewBuilder private var annotations: some View {
+        #if QURAN_SYNC
+        readingBookmarkRow(dataObject.readingBookmarkState)
+        Row(title: dataObject.bookmarkTitle, action: dataObject.actions.bookmark) {
+            bookmarkIcon
+        }
+        #else
+        if dataObject.state == .noHighlight {
+            Row(
+                title: l("ayah.menu.highlight"),
+                action: {
+                    await dataObject.actions.highlight(dataObject.highlightingColor)
+                }
+            ) {
+                IconCircle(color: dataObject.highlightingColor)
+            }
+        }
+        Row(
+            title: l("ayah.menu.highlight"),
+            subtitle: .text(l("ayah.menu.highlight-select-color")),
+            action: showHighlights
+        ) {
+            HighlightPaletteIcon()
+        }
+        #endif
+
+        switch dataObject.state {
+        case .noHighlight, .highlighted:
+            addNote
+        case .noted:
+            editNote
+        }
+
+        #if !QURAN_SYNC
+        if dataObject.state != .noHighlight {
+            Row(
+                title: noteDeleteText,
+                isDestructive: true,
+                action: dataObject.actions.deleteNote
+            ) {
+                NoorSystemImage.delete.image
+            }
+        }
+        #endif
+    }
 
     #if QURAN_SYNC
     @ViewBuilder private var bookmarkIcon: some View {
@@ -256,12 +259,15 @@ private struct AyahMenuViewList: View {
             ) {
                 Image(uiImage: ReadingBookmarkIcon.image(style: .outline, badge: .ellipsis))
             }
-        case .available(let bookmark):
+        case let .available(bookmark, subtitle, showsNewBadge):
             Row(
                 title: l("ayah.menu.reading-bookmark.title"),
-                subtitle: .text(bookmark?.displayName ?? l("bookmarks.reading.move-here")),
+                subtitle: .text(subtitle),
                 subtitlePlacement: .below,
-                action: dataObject.actions.showReadingBookmarkMenu
+                action: dataObject.actions.showReadingBookmarkMenu,
+                accessory: showsNewBadge
+                    ? NoorTagView(NoorTag(title: l("ayah.menu.reading-bookmark.new"), tone: .accent), style: .filled)
+                    : nil
             ) {
                 Image(uiImage: ReadingBookmarkIcon.image(
                     style: bookmark == nil ? .outline : .filled,
@@ -277,9 +283,9 @@ private struct AyahMenuViewList: View {
     private var noteIcon: some View {
         Group {
             if dataObject.usesSyncedNotesIcon {
-                NoorSystemImage.note.image
+                NoorSystemImage.notes.image
             } else {
-                NoorSystemImage.note.image
+                NoorSystemImage.notes.image
                     .foregroundColor(dataObject.highlightingColor.color)
             }
         }
@@ -304,14 +310,13 @@ private struct Row<Symbol: View, Accessory: View>: View {
         @ViewBuilder symbol: () -> Symbol
     ) where Accessory == EmptyView {
         self.symbol = symbol()
-        accessory = EmptyView()
+        accessory = nil
         self.title = title
         self.subtitle = subtitle
         self.subtitlePlacement = subtitlePlacement
         self.isEnabled = isEnabled
         self.isDestructive = isDestructive
         self.action = action
-        hasAccessory = false
     }
 
     init(
@@ -320,46 +325,49 @@ private struct Row<Symbol: View, Accessory: View>: View {
         subtitlePlacement: SubtitlePlacement = .inline,
         isEnabled: Bool = true,
         action: @Sendable @escaping () async -> Void,
-        @ViewBuilder symbol: () -> Symbol,
-        @ViewBuilder accessory: () -> Accessory
+        accessory: Accessory?,
+        @ViewBuilder symbol: () -> Symbol
     ) {
         self.symbol = symbol()
-        self.accessory = accessory()
+        self.accessory = accessory
         self.title = title
         self.subtitle = subtitle
         self.subtitlePlacement = subtitlePlacement
         self.isEnabled = isEnabled
         isDestructive = false
         self.action = action
-        hasAccessory = true
     }
 
     // MARK: Internal
 
     let symbol: Symbol
-    let accessory: Accessory
+    let accessory: Accessory?
     let title: String
     let subtitle: MultipartText?
     let subtitlePlacement: SubtitlePlacement
     let isEnabled: Bool
     let isDestructive: Bool
     let action: @Sendable () async -> Void
-    let hasAccessory: Bool
     @ScaledMetric var verticalPadding = 12
 
     var body: some View {
         AsyncButton(action: action) {
-            HStack {
-                ZStack {
-                    HighlightPaletteIcon()
-                        .hidden()
-                    symbol
-                        .foregroundColor(primaryColor)
-                }
-                label
-                if hasAccessory {
-                    Spacer(minLength: 12)
-                    accessory
+            Group {
+                if dynamicTypeSize.isAccessibilitySize, #available(iOS 16.0, *) {
+                    // The symbol goes above the text, so the text gets the row's full width and words don't break.
+                    VStack(alignment: .leading) {
+                        coloredSymbol
+                        stacked
+                    }
+                } else {
+                    HStack {
+                        ZStack {
+                            HighlightPaletteIcon()
+                                .hidden()
+                            coloredSymbol
+                        }
+                        content
+                    }
                 }
             }
             .padding(.horizontal)
@@ -373,6 +381,13 @@ private struct Row<Symbol: View, Accessory: View>: View {
 
     // MARK: Private
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var coloredSymbol: some View {
+        symbol
+            .foregroundColor(primaryColor)
+    }
+
     private var primaryColor: Color {
         if !isEnabled {
             return .tertiaryLabel
@@ -382,6 +397,38 @@ private struct Row<Symbol: View, Accessory: View>: View {
 
     private var secondaryColor: Color {
         isEnabled ? .secondaryLabel : .tertiaryLabel
+    }
+
+    /// Where the row doesn't fit on one line, the subtitle and accessory move under the title and the text wraps.
+    @ViewBuilder private var content: some View {
+        if #available(iOS 16.0, *) {
+            ViewThatFits(in: .horizontal) {
+                oneLine
+                stacked
+            }
+        } else {
+            oneLine
+        }
+    }
+
+    private var oneLine: some View {
+        HStack {
+            label
+            if let accessory {
+                Spacer(minLength: 12)
+                accessory
+            }
+        }
+    }
+
+    private var stacked: some View {
+        VStack(alignment: .leading) {
+            titleOverSubtitle(wraps: true)
+            if let accessory {
+                accessory
+            }
+        }
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     @ViewBuilder private var label: some View {
@@ -399,30 +446,64 @@ private struct Row<Symbol: View, Accessory: View>: View {
                 }
             }
         case .below:
-            VStack(alignment: .leading, spacing: 1) {
-                Text(title)
-                    .foregroundColor(primaryColor)
-                if let subtitle {
-                    subtitle.view(ofSize: .footnote, allowsWrapping: false)
-                        .foregroundColor(secondaryColor)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                }
+            titleOverSubtitle(wraps: false)
+        }
+    }
+
+    private func titleOverSubtitle(wraps: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text(title)
+                .foregroundColor(primaryColor)
+            if let subtitle {
+                subtitle.view(ofSize: .footnote, allowsWrapping: wraps)
+                    .foregroundColor(secondaryColor)
+                    .lineLimit(wraps ? nil : 1)
+                    .truncationMode(.tail)
             }
         }
     }
 }
 
-private struct MenuGroup<Content: View>: View {
-    // MARK: Internal
-
-    @ViewBuilder let content: Content
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            content
+private extension View {
+    /// Takes the content's one-line width, so the popover hugs it, but no more than the width offered, so at
+    /// large text sizes the popover keeps to the screen and the text wraps.
+    @ViewBuilder
+    func idealWidthUpToOffered() -> some View {
+        if #available(iOS 16.0, *) {
+            IdealWidthUpToOfferedLayout {
+                self
+            }
+        } else {
+            fixedSize(horizontal: true, vertical: false)
         }
-        .background(Color.secondarySystemGroupedBackground)
+    }
+}
+
+@available(iOS 16.0, *)
+private struct IdealWidthUpToOfferedLayout: Layout {
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        guard let subview = subviews.first else {
+            return .zero
+        }
+        return subview.sizeThatFits(widthCapped(proposal, subview))
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard let subview = subviews.first else {
+            return
+        }
+        let width = widthCapped(proposal, subview).width
+        subview.place(at: bounds.origin, proposal: ProposedViewSize(width: width, height: bounds.height))
+    }
+
+    /// Below this shortfall, the offered width is the ideal one: the popover rounds the width it gives the menu to
+    /// pixels, and a fraction of a point short would otherwise move a row's subtitle under its title.
+    private let roundingTolerance: CGFloat = 1
+
+    private func widthCapped(_ proposal: ProposedViewSize, _ subview: LayoutSubview) -> ProposedViewSize {
+        let idealWidth = subview.sizeThatFits(ProposedViewSize(width: nil, height: proposal.height)).width
+        let width = proposal.width.map { $0 + roundingTolerance >= idealWidth ? idealWidth : $0 } ?? idealWidth
+        return ProposedViewSize(width: width, height: proposal.height)
     }
 }
 
@@ -437,23 +518,41 @@ private struct IconCircle: View {
 }
 
 #if !QURAN_SYNC
-private struct NoteCircles: View {
+struct NoteCircles: View {
+    // MARK: Internal
+
     let selectedColor: HighlightColor?
     let tapped: @Sendable (HighlightColor) async -> Void
 
     var body: some View {
-        HStack {
+        row {
             ForEach(HighlightColor.sortedColors, id: \.self) { color in
                 AsyncButton(
                     action: { await tapped(color) },
                     label: { NoteCircle(color: color.color, selected: color == selectedColor) }
                 )
-                .shadow(color: Color.tertiarySystemGroupedBackground, radius: 1)
                 .accessibilityLabel(color.localizedName)
                 .accessibilityAddTraits(color == selectedColor ? .isSelected : [])
             }
         }
         .padding()
+    }
+
+    // MARK: Private
+
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    /// Below accessibility sizes the circles stay on one row, and the popover widens to fit them if the menu was
+    /// narrower. At accessibility sizes one row is wider than the screen, so the circles wrap to the menu's width.
+    @ViewBuilder
+    private func row(@ViewBuilder content: () -> some View) -> some View {
+        if dynamicTypeSize.isAccessibilitySize, #available(iOS 16.0, *) {
+            WrappingHStack(fitContentWidth: true) {
+                content()
+            }
+        } else {
+            HStack(content: content)
+        }
     }
 }
 #endif
@@ -489,12 +588,12 @@ private let previewActions = AyahMenuUI.Actions(
         AyahMenuView(dataObject: previewDataObject(
             highlightingColor: .green,
             state: .noted,
-            isTranslationView: true
+            isTranslationView: false
         ))
         Spacer()
     }
     .frame(width: 320, height: 470)
-    .background(Color.systemGroupedBackground)
+    .background(.regularMaterial)
 }
 
 #Preview("Highlighted · Dark") {
@@ -508,7 +607,7 @@ private let previewActions = AyahMenuUI.Actions(
         Spacer()
     }
     .frame(width: 320, height: 470)
-    .background(Color.systemGroupedBackground)
+    .background(.regularMaterial)
     .colorScheme(.dark)
 }
 
@@ -523,14 +622,14 @@ private let previewActions = AyahMenuUI.Actions(
         Spacer()
     }
     .frame(width: 320, height: 470)
-    .background(Color.systemGroupedBackground)
+    .background(.regularMaterial)
     .environment(\.sizeCategory, .extraExtraExtraLarge)
 }
 
 #if !QURAN_SYNC
 #Preview("Highlight Colors") {
     NoteCircles(selectedColor: .blue, tapped: { _ in })
-        .background(Color.secondarySystemGroupedBackground)
+        .background(.regularMaterial)
 }
 #endif
 
@@ -564,7 +663,7 @@ private func previewDataObject(
         repeatSubtitle: "selected verses",
         actions: previewActions,
         isTranslationView: isTranslationView,
-        readingBookmarkState: .available(bookmark: nil)
+        readingBookmarkState: .available(bookmark: nil, subtitle: "Set here", showsNewBadge: true)
     )
     #else
     return AyahMenuUI.DataObject(

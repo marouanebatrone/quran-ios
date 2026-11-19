@@ -35,8 +35,8 @@
 "quran.page.name" = "Page %@";
 // A page location: %1$@ is the name of the page's first surah and %2$@ is the localized page, such as "At-Tawbah, Page 200". Translators may reorder the placeholders.
 "quran.page.location" = "%1$@, %2$@";
-// A range of Quran references: %1$@ is the start and %2$@ is the end, such as "Al-Baqarah, Ayah 255 - Al-Baqarah, Ayah 257". Translators may reorder the placeholders.
-"quran.range" = "%1$@ - %2$@";
+// Ayahs across surahs: %1$@ is the start and %2$@ is the end reference, such as "Al-Baqarah 2:286 – Āli-ʿImrān 3:10". Ayahs in one surah are written "Al-Baqarah 2:1–10" without this format. Translators may reorder the placeholders.
+"quran.range" = "%1$@ – %2$@";
 // A hizb reference: %@ is the localized hizb number, such as "Hizb 3".
 "quran.hizb.name" = "Hizb %@";
 // A quarter reference: %1$@ is the fraction (¼, ½ or ¾) and %2$@ is the hizb reference, such as "¼ Hizb 3". Translators may reorder the placeholders.
@@ -75,6 +75,8 @@
 "translation.text.ayah-number" = "%d:%d";
 "translation.text.footnote-number" = "[%d]";
 "translation.text.footnote-title" = "Footnote #%d";
+"translation.text.verse-reference.toast" = "Showing %@";
+"translation.text.verse-reference.back" = "Back";
 "error.translation.text-retrieval" = "Oops! Something went wrong. We couldn't retrieve the translation.";
 "error.translation.text-not-available" = "No translation available for this Ayah.";
 
@@ -91,6 +93,8 @@
 "setting.contact_us" = "Contact Us";
 "setting.donate" = "Donate";
 "setting.share_app" = "Share the app...";
+// Settings row that opens the Quran.com privacy policy.
+"setting.privacy_policy" = "Privacy Policy";
 "setting.app_version" = "App Version";
 "setting.quran_account.sign_in" = "Sign in to Quran.com";
 "setting.quran_account.sign_in.subtitle" = "Sync notes, bookmarks and collections";
@@ -123,6 +127,9 @@
 "menu.ayahIndicators.readingBookmark" = "Reading bookmark";
 "menu.ayahIndicators.none" = "None";
 "menu.arabicText" = "Arabic text";
+"menu.footnotes" = "Footnote text";
+"menu.rotate_to_portrait" = "Rotate to portrait";
+"menu.rotate_to_landscape" = "Rotate to landscape";
 "menu.theme_settings" = "Themes & Settings";
 
 // MARK: - Theme
@@ -183,8 +190,10 @@
 // MARK: - Audio
 
 "audio.playing.action.modify" = "Modify";
-"audio.playing.message" = "Playing audio from %@ to %@";
-"audio.downloading.message" = "Downloading audio from %@ to %@";
+// Toast when audio starts playing: %@ is the ayah range, such as "Al-Baqarah 2:1–10", or a surah name when the whole surah plays.
+"audio.playing.toast" = "Playing %@";
+// Toast when audio starts downloading before it plays: %@ is the ayah range, such as "Al-Baqarah 2:1–10", or a surah name for a whole surah.
+"audio.downloading.toast" = "Downloading audio for %@";
 
 "audio.playing-verses.label" = "Playing Verses";
 "audio.adjust-end-verse-to-the-end.label" = "Adjust end verse to the end of the";
@@ -201,6 +210,11 @@
 "audio.end-at.description" = "Choosing an option other than Custom also updates your Play up to setting.";
 
 "audio.streaming.title" = "Stream Audio";
+"audio.dim-other-ayahs.title" = "Dim Other Ayahs";
+// Footer under the Dim Other Ayahs toggle in Audio Options: what it does, then that it applies without tapping Play.
+"audio.dim-other-ayahs.footer" = "While audio plays, dims every ayah except the one being recited. Applies right away.";
+// Footer under the Dim Other Ayahs toggle in Settings › Audio Playback.
+"audio.dim-other-ayahs.description" = "While audio plays, dims every ayah except the one being recited.";
 "audio.playback.title" = "Audio Playback";
 "audio.playback.footer.page" = "Playback continues to the end of the current Page. With streaming off, those verses download first; streaming saves space but needs an internet connection.";
 "audio.playback.footer.quarter" = "Playback continues to the end of the current ¼ Hizb. With streaming off, those verses download first; streaming saves space but needs an internet connection.";
@@ -235,10 +249,6 @@
 // VoiceOver label for the reader's button that removes the current page bookmark.
 "bookmarks.page.remove" = "Remove page bookmark";
 
-"bookmarks.sync.title" = "Sync your collections";
-"bookmarks.sync.body" = "Sign in to Quran.com to keep your collections available across devices.";
-"bookmarks.sync.action" = "Sign In";
-
 "bookmarks.collections" = "Collections";
 "bookmarks.collections.add" = "Add Collection";
 "bookmarks.highlights" = "Highlights";
@@ -257,6 +267,10 @@
 "bookmarks.collections.no-data.title" = "No collections yet";
 "bookmarks.collections.no-data.text" = "Create a collection to organize ayahs by theme, dua, or memorization plan.";
 "bookmarks.collections.ayahs.delete-hint" = "Swipe a bookmark to delete it.";
+// Delete All confirmation on a collection's page. %@ is the collection's name.
+"bookmarks.collections.ayahs.delete-all.confirmation" = "Are you sure you want to remove all ayahs from “%@”?";
+// Delete All confirmation on a highlight color's page. %@ is the color's name as shown on the page, such as Green.
+"bookmarks.collections.ayahs.delete-all.colored.confirmation" = "Are you sure you want to remove all “%@” highlights?";
 "bookmarks.collections.ayahs.open-hint" = "Opens this ayah in the Quran.";
 "bookmarks.collections.ayahs.no-data.text" = "Ayahs you bookmark while reading will appear here.";
 "bookmarks.collections.ayahs.no-data.colored.text" = "Ayahs you highlight in %@ while reading will appear here.";
@@ -264,13 +278,13 @@
 "bookmarks.editor.collection.mixed" = "Partially selected";
 "bookmarks.editor.collection.selected" = "Selected";
 "bookmarks.editor.error.highlight-unavailable" = "Highlight colors are still loading. Please try again.";
+// One-time intro at the top of the Save Ayah sheet that explains collections.
+"bookmarks.editor.intro" = "Save ayahs to Favorites or your own collections, like Duas or Hifz review. Highlight colors are here too.";
 
 // MARK: - Notes
 
-"notes.sync.title" = "Sync your notes";
-"notes.sync.body" = "Sign in to Quran.com to keep your notes available across devices.";
 "notes.sync.no-data.title" = "No notes yet";
-"notes.sync.no-data.text" = "Tap and hold an Ayah while reading, then tap Add Note to write your first note.";
+"notes.sync.no-data.text" = "Tap and hold an ayah while reading, then tap Add Note to write your first note.";
 
 "notes.no-data.title" = "Adding Ayah Highlights...";
 "notes.no-data.text" = "Tap and hold on an Ayah. You can extend the selection to include multiple Ayat, then tap the Bookmark button.";
@@ -288,6 +302,14 @@
 "notes.search.placeholder.text" = "Search your notes";
 "notes.search.no-results.title" = "No notes match \"%@\"";
 "notes.search.no-results.text" = "Try a different word from a note you saved or a sura name.";
+// Title of the Notes card telling upgraders that their highlights moved to the Bookmarks tab.
+"notes.highlights-tip.title" = "Highlights now live in Bookmarks";
+// Body of the Notes card about highlights moving to the Bookmarks tab.
+"notes.highlights-tip.text" = "Notes keeps only what you write. Your highlighted ayahs are in the Bookmarks tab, by color.";
+// Opens the Bookmarks tab from the Notes card and empty state.
+"notes.highlights.show" = "Show Highlights";
+// Notes empty state line when the user has highlights.
+"notes.no-data.highlights.text" = "Your highlights are in the Bookmarks tab.";
 
 // MARK: - Ayah Menu
 
@@ -312,8 +334,14 @@
 "ayah.menu.reading-bookmark.title" = "Reading Bookmark";
 "ayah.menu.reading-bookmark.single-ayah-only" = "Select a single Ayah";
 "ayah.menu.reading-bookmark.saved" = "Reading bookmark saved at %@";
-"ayah.menu.reading-bookmark.moved" = "Reading bookmark moved from %@ to %@";
+/* Subtitle of the toast shown the first time a reading bookmark is saved */
+"ayah.menu.reading-bookmark.saved.explanation" = "Move it as you read. You have three, one for each reading.";
+"ayah.menu.reading-bookmark.moved-to" = "Reading bookmark moved to %@";
+/* Subtitle of the toast shown the first time a reading bookmark is moved */
+"ayah.menu.reading-bookmark.moved.explanation" = "Reading bookmarks move rather than add up. To keep ayahs, save them to a collection.";
 "ayah.menu.reading-bookmark.removed" = "Reading bookmark removed from %@";
+// Badge on the ayah menu's Reading Bookmark row.
+"ayah.menu.reading-bookmark.new" = "New";
 /* VoiceOver label for a reading bookmark on an ayah. %1$@ is "ayah.menu.reading-bookmark.title" and %2$@ is the bookmark's color, such as "Teal" */
 "ayah.indicator.reading-bookmark" = "%1$@: %2$@";
 
@@ -426,6 +454,14 @@
 "new.translation_update.details" = "* Corrected the Russian translation of “mushaf” - thanks to @pulatovpro.";
 
 "bookmarks.old-page-bookmarks" = "Old Page Bookmarks";
+// Header of the Old Page Bookmarks collection.
+"bookmarks.old-page-bookmarks.explanation" = "Saved from your page bookmarks. Each page is now its first ayah.";
+// Title of the Bookmarks card telling upgraders where their 3.0 page bookmarks went.
+"bookmarks.old-page-bookmarks-tip.title" = "Your page bookmarks are here";
+// Body of the Bookmarks card about 3.0 page bookmarks. %@ is the app version, such as 3.0.
+"bookmarks.old-page-bookmarks-tip.text" = "Each page you bookmarked in %@ is now its first ayah, in Old Page Bookmarks. To keep your place while reading, use reading bookmarks.";
+// Button on the Bookmarks card that opens the Old Page Bookmarks collection.
+"bookmarks.old-page-bookmarks.open" = "Open Old Page Bookmarks";
 
 "notes.minimum-length.alert.title" = "Note is too short";
 "notes.minimum-length.alert.body" = "Notes must be at least %d characters.";
@@ -447,6 +483,10 @@
 "bookmarks.reading.show-less" = "Show less";
 // Reading bookmarks menu explanation below its title.
 "bookmarks.reading.description" = "Use one for each reading, like your khatmah or memorization.";
+// Reading bookmarks menu heading above the explanation, shown while no reading bookmark is placed.
+"bookmarks.reading.first-run.title" = "Keep your place in up to three readings";
+// Subtitle of the suggested reading bookmark row, shown while no reading bookmark is placed.
+"bookmarks.reading.first-run.suggested" = "Suggested for your first reading";
 // Reading bookmark row subtitle when the bookmark is at the current ayah or page.
 "bookmarks.reading.saved-here" = "Saved here";
 // Reading bookmark row subtitle when the bookmark has no position.
@@ -620,3 +660,42 @@
 "sync.sign-out.review" = "Review";
 // Button on an item that doesn't sync: opens its note editor or renames its collection.
 "sync.held.edit" = "Edit";
+
+// MARK: - Ayah ranges
+
+// How VoiceOver reads ayahs across surahs: %1$@ is the start and %2$@ is the end ayah, such as "Al-Baqarah, Ayah 286 to Āli-ʿImrān, Ayah 10". Translators may reorder the placeholders.
+"quran.range.spoken" = "%1$@ to %2$@";
+// How VoiceOver reads ayahs in one surah: %1$@ is the first and %2$@ is the last localized ayah number, such as "Ayahs 1 to 10" in "Al-Baqarah, Ayahs 1 to 10". Translators may reorder the placeholders.
+"quran.ayah.number-range" = "Ayahs %1$@ to %2$@";
+// Sign-in reminder toast title after a signed-out user saves a new note.
+"sync.nudge.note-saved" = "Note saved";
+// Sign-in reminder toast title after a signed-out user creates a collection.
+"sync.nudge.collection-created" = "Collection created";
+// Sign-in reminder toast subtitle under "Note saved" or "Collection created": "it" is the note or collection.
+"sync.nudge.subtitle" = "Sign in to see it on Quran.com and all your devices.";
+// Sign-in reminder toast button that starts signing in to Quran.com.
+"sync.nudge.sign-in" = "Sign In";
+// What's New sync reveal chip, before an arrow and "Quran.com": sync is moving from iCloud to Quran.com. Keep "iCloud" in English.
+"new.sync_reveal.chip.from_icloud" = "Moving from iCloud";
+// How VoiceOver reads the What's New sync reveal chip. Keep "iCloud" and "Quran.com" in English.
+"new.sync_reveal.chip.accessibility" = "Moving from iCloud to Quran.com";
+// What's New sync reveal title: the user's Quran reading is now connected across their devices and Quran.com.
+"new.sync_reveal.title" = "Your Quran, connected";
+// What's New sync reveal benefit title, after a sync icon: the user's reading place follows them on every device.
+"new.sync_reveal.every_device.title" = "Your place on every device";
+// What's New sync reveal benefit detail under "Your place on every device". Keep "iCloud", "Quran.com" and "Quran ID" in English.
+"new.sync_reveal.every_device.subtitle" = "Bookmarks, notes and reading progress move from iCloud to Quran.com, with your free Quran ID.";
+// What's New sync reveal benefit title, after a book icon: study more on Quran.com without losing the reading place.
+"new.sync_reveal.go_deeper.title" = "Go deeper without losing your place";
+// What's New sync reveal benefit detail under "Go deeper without losing your place": Quran.com opens tafsir, reflections and lessons at the ayah the user stopped on. Keep "Quran.com" in English.
+"new.sync_reveal.go_deeper.subtitle" = "Tafsir, reflections and lessons on Quran.com, at the ayah you stopped on.";
+// What's New sync reveal button that starts signing in to Quran.com with a Quran ID account. Keep "Quran ID" in English.
+"new.sync_reveal.sign_in" = "Continue with Quran ID";
+// What's New sync reveal button that closes it without signing in.
+"new.sync_reveal.not_now" = "Not now";
+// What's New sync reveal footnote on iPhone.
+"new.sync_reveal.footnote.iphone" = "Without signing in, your bookmarks stay on this iPhone.";
+// What's New sync reveal footnote on iPad.
+"new.sync_reveal.footnote.ipad" = "Without signing in, your bookmarks stay on this iPad.";
+// What's New sync reveal footnote on Mac.
+"new.sync_reveal.footnote.mac" = "Without signing in, your bookmarks stay on this Mac.";

@@ -42,8 +42,16 @@ public final class ContentTranslationViewModel: ObservableObject {
         arabicFontSize = fontSizePreferences.arabicFontSize
         translationFontSize = fontSizePreferences.translationFontSize
         showArabicText = contentStatePreferences.showArabicInTranslation
+        showFootnotes = contentStatePreferences.showFootnotesInTranslation
         selectedTranslations = selectedTranslationsPreferences.selectedTranslationIds
         highlights = [:]
+
+        overlayService.$overlays
+            .combineLatest($verses)
+            .map { overlays, verses in overlays.undimmedVerses?.intersection(verses) }
+            .removeDuplicates()
+            .sink { [weak self] in self?.undimmedVerses = $0 }
+            .store(in: &cancellables)
 
         overlayService.$overlays
             .combineLatest($verses)
@@ -89,6 +97,10 @@ public final class ContentTranslationViewModel: ObservableObject {
             .sink { [weak self] in self?.showArabicText = $0 }
             .store(in: &cancellables)
 
+        contentStatePreferences.$showFootnotesInTranslation
+            .sink { [weak self] in self?.showFootnotes = $0 }
+            .store(in: &cancellables)
+
         // Translation services update the selection from background tasks.
         selectedTranslationsPreferences.$selectedTranslationIds
             .receive(on: DispatchQueue.main)
@@ -108,6 +120,10 @@ public final class ContentTranslationViewModel: ObservableObject {
     @Published public var verses: [AyahNumber] = [] {
         didSet { recordListUpdate(reason: "verses_changed") }
     }
+
+    /// Follows a verse reference in a footnote, from the verse with the footnote to the referenced verse.
+    /// While it's `nil`, footnotes show their references as plain text.
+    public var onVerseReferenceTapped: ((_ verse: AyahNumber, _ reference: AyahNumber) -> Void)?
 
     // MARK: Internal
 
@@ -136,7 +152,13 @@ public final class ContentTranslationViewModel: ObservableObject {
         didSet { recordListUpdate(reason: "arabic_text_visibility_changed") }
     }
 
+    @Published var showFootnotes: Bool {
+        didSet { recordListUpdate(reason: "footnotes_visibility_changed") }
+    }
+
     @Published var highlights: [AyahNumber: Color]
+
+    @Published private(set) var undimmedVerses: Set<AyahNumber>?
 
     #if QURAN_SYNC
     @Published private(set) var indicatorsByVerse: [AyahNumber: Set<AyahIndicator>] = [:]
@@ -168,7 +190,10 @@ public final class ContentTranslationViewModel: ObservableObject {
         var items: [TranslationItem] = []
 
         for (verse, verseText) in verseTexts.sorted(by: { $0.key < $1.key }) {
-            let color = highlights[verse]
+            let decoration = TranslationVerseDecoration(
+                color: highlights[verse],
+                isDimmed: undimmedVerses?.contains(verse) == false
+            )
 
             // Add sura name, if a new sura
             if verse.sura.firstVerse == verse {
@@ -180,14 +205,14 @@ public final class ContentTranslationViewModel: ObservableObject {
                             quranFont: quranFont,
                             arabicFontSize: arabicFontSize
                         ),
-                        color
+                        decoration
                     )
                 )
             }
 
-            items.append(.verseNumber(verseNumber(verse: verse), color))
+            items.append(.verseNumber(verseNumber(verse: verse), decoration))
             if showsArabicText {
-                items.append(.arabicText(arabicText(verse: verse, verseText: verseText, quranFont: quranFont), color))
+                items.append(.arabicText(arabicText(verse: verse, verseText: verseText, quranFont: quranFont), decoration))
             }
 
             for (index, translation) in translations.enumerated() {
@@ -202,7 +227,7 @@ public final class ContentTranslationViewModel: ObservableObject {
                                 translation: translation,
                                 reference: reference,
                                 translationFontSize: translationFontSize
-                            ), color
+                            ), decoration
                         )
                     )
                 case .string(let string):
@@ -232,9 +257,14 @@ public final class ContentTranslationViewModel: ObservableObject {
                                     chunkIndex: chunkIndex,
                                     readMore: chunkIndex == chunks.count - 1 ? readMore : false, // Add read more to the last chunk.
                                     translationFontSize: translationFontSize
-                                ), color
+                                ), decoration
                             )
                         )
+                    }
+
+                    if showFootnotes, !readMore {
+                        items += footnoteChunks(verse: verse, translation: translation, string: string)
+                            .map { .translationFootnoteChunk($0, decoration) }
                     }
                 }
 
@@ -246,7 +276,7 @@ public final class ContentTranslationViewModel: ObservableObject {
                                 verse: verse,
                                 translation: translation,
                                 translationFontSize: translationFontSize
-                            ), color
+                            ), decoration
                         )
                     )
                 }
@@ -254,7 +284,7 @@ public final class ContentTranslationViewModel: ObservableObject {
 
             let isLastVerseInTheView = loadedContent.verses.last == verse
             if !isLastVerseInTheView {
-                items.append(.verseSeparator(TranslationVerseSeparator(verse: verse), color))
+                items.append(.verseSeparator(TranslationVerseSeparator(verse: verse), decoration))
             }
         }
 
@@ -327,6 +357,9 @@ public final class ContentTranslationViewModel: ObservableObject {
 
         case .readMore(let translationId, let sura, let ayah):
             expandTranslationIfNeeded(translationId: translationId, sura: sura, ayah: ayah)
+
+        case .verseReference(let sura, let ayah, let referencedSura, let referencedAyah):
+            followVerseReference(sura: sura, ayah: ayah, referencedSura: referencedSura, referencedAyah: referencedAyah)
         }
     }
 
@@ -371,6 +404,40 @@ public final class ContentTranslationViewModel: ObservableObject {
             quranFont: quranFont,
             arabicFontSize: arabicFontSize
         )
+    }
+
+    private func footnoteChunks(verse: AyahNumber, translation: Translation, string: TranslationString) -> [TranslationFootnoteChunk] {
+        zip(string.footnoteRanges, string.footnotes.indices).flatMap { markerRange, footnoteIndex in
+            let text = string.footnoteText(at: footnoteIndex)
+            let verseReferences = followableVerseReferences(in: text, of: verse)
+            let chunks = text.count <= Self.maxChunkSize
+                ? [text.startIndex ..< text.endIndex]
+                : text.chunkRanges(maxChunkSize: Self.maxChunkSize)
+            return chunks.indices.map { chunkIndex in
+                TranslationFootnoteChunk(
+                    verse: verse,
+                    translation: translation,
+                    footnoteIndex: footnoteIndex,
+                    marker: chunkIndex == 0 ? String(string.text[markerRange]) : nil,
+                    text: text,
+                    verseReferences: verseReferences,
+                    chunks: chunks,
+                    chunkIndex: chunkIndex,
+                    translationFontSize: translationFontSize
+                )
+            }
+        }
+    }
+
+    /// The verse references in a footnote of `verse` that the reader can follow: verses of the Quran other than `verse`.
+    private func followableVerseReferences(in text: String, of verse: AyahNumber) -> [FootnoteVerseReference] {
+        guard onVerseReferenceTapped != nil else {
+            return []
+        }
+        return text.footnoteVerseReferences().filter { reference in
+            // Footnotes can start by naming their own verse, like Khan & Hilali's "(V.{40:74})".
+            AyahNumber(quran: verse.quran, sura: reference.sura, ayah: reference.ayah).map { $0 != verse } ?? false
+        }
     }
 
     private func verseNumber(verse: AyahNumber) -> TranslationVerseNumber {
@@ -424,10 +491,24 @@ public final class ContentTranslationViewModel: ObservableObject {
             footnote = TranslationFootnote(
                 string: string,
                 footnoteIndex: footnoteIndex,
+                verse: ayah,
+                verseReferences: followableVerseReferences(in: string.footnoteText(at: footnoteIndex), of: ayah),
                 translation: translation,
                 translationFontSize: translationFontSize
             )
         }
+    }
+
+    private func followVerseReference(sura: Int, ayah: Int, referencedSura: Int, referencedAyah: Int) {
+        guard let quran = loadedContent.verses.first?.quran,
+              let verse = AyahNumber(quran: quran, sura: sura, ayah: ayah),
+              let reference = AyahNumber(quran: quran, sura: referencedSura, ayah: referencedAyah)
+        else {
+            return
+        }
+        logger.info("Quran Translation: following \(reference.nonLocalizedDescription) from a footnote of \(verse.nonLocalizedDescription)")
+        footnote = nil
+        onVerseReferenceTapped?(verse, reference)
     }
 
     private func performOnTranslationText(translationId: Translation.ID, sura: Int, ayah: Int, _ body: (AyahNumber, Translation, TranslationString) -> Void) {

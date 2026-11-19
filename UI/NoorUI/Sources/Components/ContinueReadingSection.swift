@@ -106,21 +106,17 @@ public struct ContinueReadingSection: View {
         return { deleteReadingBookmark($0.bookmark) }
     }
 
-    private func contextMenu(for bookmark: PlacedReadingBookmark) -> ReadingBookmarkContextMenu {
-        ReadingBookmarkContextMenu(
-            isEnabled: !isEditingBookmarks,
-            open: { selectReadingBookmark(bookmark) },
-            rename: renameReadingBookmark.map { rename in { rename(bookmark) } }
-        )
-    }
-
     @ViewBuilder
     private var bookmarks: some View {
         NoorListRows(visibleBookmarks, onDelete: deleteVisibleBookmark) { item in
             ContinueReadingBookmarkRow(bookmark: item.bookmark) {
                 selectReadingBookmark(item.bookmark)
             }
-            .modifier(contextMenu(for: item.bookmark))
+            .noorItemContextMenu(
+                isEnabled: !isEditingBookmarks,
+                open: { selectReadingBookmark(item.bookmark) },
+                rename: renameReadingBookmark.map { rename in { rename(item.bookmark) } }
+            )
         }
         if readingBookmarks.count > 1, !isEditingBookmarks {
             Button {
@@ -132,7 +128,7 @@ public struct ContinueReadingSection: View {
                     if bookmarksExpanded {
                         Spacer(minLength: 0)
                         Text(l("bookmarks.reading.show-less"))
-                        Image(systemName: "chevron.up")
+                        NoorSystemImage.collapse.image
                             .font(.caption.weight(.semibold))
                         Spacer(minLength: 0)
                     } else {
@@ -146,7 +142,7 @@ public struct ContinueReadingSection: View {
                         }
                         Text(lFormat("bookmarks.reading.more-count", readingBookmarks.count - 1))
                         Spacer(minLength: 0)
-                        Image(systemName: "chevron.down")
+                        NoorSystemImage.expand.image
                             .font(.caption.weight(.semibold))
                     }
                 }
@@ -167,7 +163,7 @@ public struct ContinueReadingSection: View {
     private var recentPages: some View {
         VStack(alignment: .leading) {
             HStack {
-                Image(systemName: "clock")
+                NoorSystemImage.lastPage.image
                     .accessibilityHidden(true)
                 Text(lFormat("home.recent-pages.title", NumberFormatter.shared.format(lastPages.count)))
             }
@@ -197,37 +193,6 @@ private struct SlotIdentifiedBookmark: Identifiable {
     let bookmark: PlacedReadingBookmark
 
     var id: ReadingBookmarkSlot { bookmark.slot }
-}
-
-/// The long-press menu, which rows without rename or delete actions, like Home's, don't get.
-/// Delete goes through the row's own delete, which also backs its swipe and Edit mode.
-private struct ReadingBookmarkContextMenu: ViewModifier {
-    let isEnabled: Bool
-    let open: @MainActor () -> Void
-    let rename: (@MainActor () -> Void)?
-
-    @Environment(\.noorListRowDelete) private var delete
-
-    func body(content: Content) -> some View {
-        content
-            .contextMenu {
-                if isEnabled, rename != nil || delete != nil {
-                    Button(action: open) {
-                        Label { Text(l("bookmarks.reading.open")) } icon: { NoorSystemImage.book.image }
-                    }
-                    if let rename {
-                        Button(action: rename) {
-                            Label { Text(l("bookmarks.collections.rename")) } icon: { NoorSystemImage.edit.image }
-                        }
-                    }
-                    if let delete {
-                        Button(role: .destructive, action: delete) {
-                            Label { Text(l("button.delete")) } icon: { NoorSystemImage.cancel.image }
-                        }
-                    }
-                }
-            }
-    }
 }
 #endif
 

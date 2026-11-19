@@ -51,7 +51,8 @@ final class NotesViewController: UIHostingController<NotesView>, UISearchBarDele
     }
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        logger.info("[Notes] search textDidChange to \(searchText)")
+        // Debug only: search text must not reach Crashlytics, which receives info and above.
+        logger.debug("[Notes] search textDidChange to \(searchText)")
         viewModel.searchTerm = searchText
     }
 
@@ -101,14 +102,15 @@ final class NotesViewController: UIHostingController<NotesView>, UISearchBarDele
                 get: { [weak self] in self?.currentEditMode },
                 set: { [weak self] value in self?.viewModel.editMode = value ?? .inactive }
             ),
-            customItems: [
+            listItems: [
                 UIBarButtonItem(
-                    image: UIImage(systemName: "square.and.arrow.up"),
+                    image: NoorSystemImage.share.uiImage,
                     style: .plain,
                     target: self,
                     action: #selector(shareAllNotes)
                 ),
-            ] + [search.barButtonItem].compactMap { $0 }
+            ],
+            customItems: [search.barButtonItem].compactMap { $0 }
         )
     }
 

@@ -86,13 +86,13 @@ class TranslationVerseViewController: UIHostingController<TranslationVerseView> 
             self?.settingsTapped()
         }
         let next = NavigationBarButton.secondary(
-            systemName: "chevron.left",
+            image: .nextVerse,
             accessibilityLabel: l("translation.verse.next")
         ) { [weak self] in
             self?.viewModel.next()
         }
         let previous = NavigationBarButton.secondary(
-            systemName: "chevron.right",
+            image: .previousVerse,
             accessibilityLabel: l("translation.verse.previous")
         ) { [weak self] in
             self?.viewModel.previous()
@@ -131,6 +131,8 @@ class TranslationVerseViewController: UIHostingController<TranslationVerseView> 
         var state = MoreMenuControlsState()
         state.mode = .alwaysOff
         state.translationsSelection = .alwaysOn
+        state.arabicText = .alwaysOn
+        state.footnotes = .alwaysOn
         state.wordPointer = .alwaysOff
         state.orientation = .alwaysOff
         state.fontSize = .alwaysOn

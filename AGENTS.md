@@ -11,6 +11,8 @@ The Makefile exposes explicit targets for each sync mode:
 
 Package build targets honor `TARGET` as a scheme override, such as `make build-no-sync TARGET=NoorUI`. Package test targets always use the `QuranEngine-Package` scheme. Omit `TARGET` to run its full test plan, or set a production or test target to filter the run, such as `make test-sync TARGET=AyahMenuFeature` or `make test-sync TARGET=AyahMenuFeatureTests`. Keep every package test target in `QuranEngine-Package.xctestplan`. Ambient `QURAN_SYNC` may be set or unset through `launchctl`, so always use an explicit sync-mode target.
 
+Never overlap two package test runs on one simulator. Their test processes share its UserDefaults and Documents, so one run's resets break the other's preference tests. Give each concurrent run its own simulator through `PACKAGE_DESTINATION`, or run no-sync and sync one after the other.
+
 Local sync targets expect `quran-ios`, `mobile-sync`, and `mobile-sync-spm` under one workspace. The Makefile finds that workspace through `git rev-parse --git-common-dir`, so the defaults work from both the primary checkout and Git worktrees. Do not derive sibling repositories from `../` relative to a worktree. `MOBILE_SYNC_DIR` locates the Gradle repository, `MOBILE_SYNC_SPM_PATH` selects the local Swift package, and `MOBILE_SYNC_XCFRAMEWORK_PATH` selects its local binary; path presence is the local/remote switch. The Makefile must supply and validate these paths. Keep the XCFramework path relative to the `mobile-sync-spm` package root because SwiftPM binary target paths must be relative.
 
 Keeping these commands green locally should keep the CI workflow green as well.
@@ -35,6 +37,7 @@ Keeping these commands green locally should keep the CI workflow green as well.
 - Prefer `NoorAnimation.standard` for SwiftUI animations and `NoorAnimation.animate` for UIKit animations unless there is a clear reason for different behavior. Preserve Reduce Motion handling and intentional animation suppression.
 - Do not add a NoorUI dependency to lower-level modules such as UIx.
 - Use NoorUI navigation-action components instead of constructing feature-local buttons.
+- Name SF Symbols through `NoorSystemImage`, never string literals: `.image` in SwiftUI, `.uiImage` in UIKit. Add cases named by meaning; when the glyph already has a case with another meaning, add a `static var` alias. Prefer an SF Symbol to a new bundled image, and use `NoorImage` only for custom assets with no SF Symbol equivalent. `make format-lint` enforces this outside UIx, tests and `#Preview`.
 - Keep Edit, Close, overflow, and secondary navigation-bar actions neutral. Reserve the app tint for Done and primary actions.
 - `NoorListIcon`/`NoorListItem` leading icons take the app tint by default. Pass an explicit color for icons that carry meaning (bookmark and collection colors) or state (unselected selection circles), and secondary label for search-suggestion and recents glyphs.
 - Use Done only to commit or finish an editing/confirmation flow. Use a leading Close × for dismissal-only modals, with localized accessibility text.

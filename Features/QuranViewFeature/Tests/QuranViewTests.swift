@@ -1,3 +1,4 @@
+import NoorUI
 import UIKit
 import XCTest
 @testable import QuranViewFeature
@@ -183,32 +184,56 @@ final class QuranViewTests: XCTestCase {
         XCTAssertFalse(audioView.isUserInteractionEnabled)
     }
 
-    func test_bottomBarsHeightIsHowFarTheAudioBarReachesAboveTheWindowBottom() {
-        let context = makeReader(height: 800, audioBarHeight: 120)
+    func test_audioBarKeepsToastsAbove() {
+        let sut = QuranView()
+        let audioView = UIView()
 
-        XCTAssertEqual(context.sut.bottomBarsHeight, 164)
+        sut.addAudioBannerView(audioView)
+
+        XCTAssertTrue(audioView.keepsToastsAbove)
     }
 
-    func test_bottomBarsHeightIsZeroWhileBarsAreHidden() {
-        let context = makeReader(audioBarHeight: 120)
+    func test_spaceIsLeftAloneWhileTheRecitationCannotBeToggled() {
+        let context = makeSut()
+        let delegate = QuranViewDelegateSpy(canTogglePlayPause: false)
+        context.sut.delegate = delegate
 
-        context.sut.setBarsHidden(true)
-
-        XCTAssertEqual(context.sut.bottomBarsHeight, 0)
+        XCTAssertNil(spaceCommand(of: context.sut))
     }
 
-    func test_bottomBarsHeightIsZeroWhileAudioBarIsHidden() {
-        let context = makeReader(audioBarHeight: 120)
+    // Regression: on Mac, space activated the focused verse instead of pausing.
+    func test_spaceTogglesTheRecitationFromTheReaderContent() throws {
+        let context = makeSut()
+        let delegate = QuranViewDelegateSpy(canTogglePlayPause: true)
+        context.sut.delegate = delegate
 
-        context.sut.setAudioBarHidden(true)
+        let space = try XCTUnwrap(spaceCommand(of: context.sut))
+        XCTAssertEqual(space.modifierFlags, [])
+        XCTAssertTrue(space.wantsPriorityOverSystemBehavior)
+        let action = try XCTUnwrap(space.action)
+        let contentView = try XCTUnwrap(context.sut.contentView)
+        // Reachability only; UIKit's key-command lookup isn't exercised.
+        XCTAssertIdentical(contentView.target(forAction: action, withSender: space) as AnyObject?, context.sut)
 
-        XCTAssertEqual(context.sut.bottomBarsHeight, 0)
+        context.sut.perform(action, with: space)
+
+        XCTAssertEqual(delegate.playPauseKeyPresses, 1)
     }
 
-    func test_bottomBarsHeightIsZeroWithoutAudioBar() {
-        let context = makeReader(audioBarHeight: nil)
+    func test_spaceIsLeftToTextBeingEditedInTheReader() {
+        let context = makeSut()
+        let delegate = QuranViewDelegateSpy(canTogglePlayPause: true)
+        context.sut.delegate = delegate
+        let textField = UITextField(frame: CGRect(x: 0, y: 0, width: 200, height: 44))
+        context.sut.addSubview(textField)
+        let window = UIWindow(frame: context.sut.frame)
+        window.rootViewController = context.retainedHostViewController
+        window.makeKeyAndVisible()
+        defer { window.isHidden = true }
 
-        XCTAssertEqual(context.sut.bottomBarsHeight, 0)
+        XCTAssertTrue(textField.becomeFirstResponder())
+
+        XCTAssertNil(spaceCommand(of: context.sut))
     }
 
     private struct TestContext {
@@ -219,9 +244,23 @@ final class QuranViewTests: XCTestCase {
         let audioView: UIView
     }
 
-    private struct ReaderContext {
-        let retainedWindow: UIWindow
-        let sut: QuranView
+    private final class QuranViewDelegateSpy: QuranViewDelegate {
+        init(canTogglePlayPause: Bool) {
+            self.canTogglePlayPause = canTogglePlayPause
+        }
+
+        private(set) var playPauseKeyPresses = 0
+        private let canTogglePlayPause: Bool
+
+        func onQuranViewTapped(_ quranView: QuranView) {}
+
+        func canTogglePlayPause(in quranView: QuranView) -> Bool {
+            canTogglePlayPause
+        }
+
+        func onQuranViewPlayPauseKeyPressed(_ quranView: QuranView) {
+            playPauseKeyPresses += 1
+        }
     }
 
     private func makeSut() -> TestContext {
@@ -267,20 +306,8 @@ final class QuranViewTests: XCTestCase {
         )
     }
 
-    /// A reader filling an 844pt-tall window from the top down to `height`, with an audio bar
-    /// `audioBarHeight` tall pinned to its bottom when given.
-    private func makeReader(height: CGFloat = 844, audioBarHeight: CGFloat?) -> ReaderContext {
-        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 844))
-        let sut = QuranView()
-        sut.frame = CGRect(x: 0, y: 0, width: window.bounds.width, height: height)
-        window.addSubview(sut)
-        if let audioBarHeight {
-            let audioView = UIView()
-            audioView.heightAnchor.constraint(equalToConstant: audioBarHeight).isActive = true
-            sut.addAudioBannerView(audioView)
-        }
-        window.layoutIfNeeded()
-        return ReaderContext(retainedWindow: window, sut: sut)
+    private func spaceCommand(of quranView: QuranView) -> UIKeyCommand? {
+        quranView.keyCommands?.first { $0.input == " " }
     }
 
     @available(iOS 26.0, *)
