@@ -203,17 +203,33 @@ private final class Screen {
 
     /// The screen once its content stops changing.
     func png() async throws -> Data {
+        var settled: Data?
         var previous: Data?
         for _ in 0 ..< 24 {
             try await Task.sleep(nanoseconds: 250_000_000)
-            let png = renderPNG()
+            let png = renderPNG(drawingHierarchy: false)
             if png == previous {
-                return png
+                settled = png
+                break
             }
             previous = png
         }
-        XCTFail("The screen kept changing; keeping its last frame")
-        return previous ?? renderPNG()
+        if settled == nil {
+            XCTFail("The screen kept changing; keeping its last frame")
+        }
+        let png = settled ?? previous ?? renderPNG(drawingHierarchy: false)
+        let layerColors = distinctColorCount(png)
+        print("[screenshots] layer rendering: \(layerColors) sampled colors")
+        if layerColors <= 8 {
+            // Some content only draws on screen; draw the view hierarchy instead.
+            let drawn = renderPNG(drawingHierarchy: true)
+            let drawnColors = distinctColorCount(drawn)
+            print("[screenshots] hierarchy drawing: \(drawnColors) sampled colors")
+            if drawnColors > layerColors {
+                return drawn
+            }
+        }
+        return png
     }
 
     func close() {
@@ -239,7 +255,11 @@ private final class Screen {
     }
 
     private static func makeWindow(_ controller: UIViewController) -> UIWindow {
-        let window = UIWindow(frame: CGRect(origin: .zero, size: screenSize))
+        // In the test host's scene when it has one, so the window is on screen and draws like the app's.
+        let scene = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first
+        let window = scene.map(UIWindow.init(windowScene:)) ?? UIWindow()
+        window.frame = CGRect(origin: .zero, size: screenSize)
+        print("[screenshots] window \(scene == nil ? "without a scene" : "in the test host's scene")")
         window.backgroundColor = themeStyle.backgroundColor
         // The accent the app tints its windows with, which SwiftUI reads as accentColor for links.
         window.tintColor = AppIconAccent.current.color
@@ -275,15 +295,19 @@ private final class Screen {
         }
     }
 
-    private func renderPNG() -> Data {
+    private func renderPNG(drawingHierarchy: Bool) -> Data {
         window.layoutIfNeeded()
         let format = UIGraphicsImageRendererFormat()
         format.scale = UIScreen.main.scale
         format.opaque = true
         format.preferredRange = .standard
         let renderer = UIGraphicsImageRenderer(bounds: window.bounds, format: format)
-        return renderer.pngData { _ in
-            _ = window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+        return renderer.pngData { context in
+            if drawingHierarchy {
+                _ = window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+            } else {
+                window.layer.render(in: context.cgContext)
+            }
         }
     }
 }
