@@ -81,10 +81,11 @@ final class TranslationVerseReferencesScreenshotTests: XCTestCase {
         sheet.close()
     }
 
-    /// (c) After tapping {39:47}: the reader at 39:47, highlighted, with the toast to go back.
+    /// (c) After tapping {39:47}: the reader at 39:47, highlighted. The toast's glass card doesn't render
+    /// off screen, so the screenshot leaves the toast out.
     func test_c_followedReference() async throws {
         let target = Self.verse(39, 47)
-        let screen = try await Screen.translationPage(of: target, navigatedTo: target, toast: .verseReference(target) {})
+        let screen = try await Screen.translationPage(of: target, navigatedTo: target)
         try save(await screen.png(), as: "c-followed-reference")
         screen.close()
     }
