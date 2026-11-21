@@ -11,7 +11,7 @@ import NoorFont
 import QuranKit
 import QuranResources
 import QuranText
-import QuranTextKit
+@testable import QuranTextKit
 import ReadingService
 import SwiftUI
 import TranslationService
